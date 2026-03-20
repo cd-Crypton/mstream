@@ -53,7 +53,7 @@ cd mstream/mstream
 npm install
 ```
 
-### 3. Refer the <a href="https://github.com/cd-Crypton/mstream/blob/main/.env.example">.env.example</a> to set your own .env file.
+### 3. Refer the <a href="https://github.com/cd-Crypton/mstream/blob/zip/.env.example">.env.example</a> to set your own .env file.
 
 ## Start the server
 
@@ -74,7 +74,7 @@ Host your own instance of <a href="https://mstream.pages.dev/">MSTREAM</a> on Cl
 - Build Command: `npm run build`
 - Build Output Directory: `dist`
 - Root Directory: `mstream`
-- After successful deployment, go to Settings >> Variables and Secrets >> Then the following details in <a href="https://github.com/cd-Crypton/mstream/blob/main/.env.example">.env.example</a>
+- After successful deployment, go to Settings >> Variables and Secrets >> Then the following details in <a href="https://github.com/cd-Crypton/mstream/blob/zip/.env.example">.env.example</a>
 
 ### Pull Requests
 
