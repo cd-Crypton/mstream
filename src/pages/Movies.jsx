@@ -10,6 +10,9 @@ const Movies = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Hardcoded or dynamically fetched from TMDB metadata (TMDB defaults to 500 max discover pages)
+  const totalPages = 300; 
 
   // Initialize filters from URL or defaults
   const [filters, setFilters] = useState({
@@ -29,6 +32,7 @@ const Movies = () => {
     fetchCredits
   } = useTMDB();
 
+  // Fetch movies whenever filters change
   useEffect(() => {
     fetchMovies();
   }, [filters]);
@@ -83,6 +87,12 @@ const Movies = () => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
 
+  // Dedicated pagination handler so it doesn't reset the page to 1
+  const handlePageChange = (newPage) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll back up
+  };
+
   const clearFilters = () => {
     setFilters({
       sort_by: 'popularity.desc',
@@ -92,15 +102,6 @@ const Movies = () => {
       page: 1
     });
   };
-
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-spinner"></div>
-        <p>Loading movies...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="movies-page">
@@ -203,13 +204,65 @@ const Movies = () => {
         </div>
       </div>
 
-      <div className="content-rows">
-        <MovieRow
-          title={`Movies (${movies.length})`}
-          items={movies}
-          onItemClick={handleItemClick}
-        />
-      </div>
+      {/* Embedded Loading State keeps the layout static during fetch */}
+      {loading ? (
+        <div className="loading-screen" style={{ minHeight: '300px' }}>
+          <div className="loading-spinner"></div>
+          <p>Loading movies...</p>
+        </div>
+      ) : (
+        <>
+          <div className="content-rows">
+            <MovieRow
+              title={`Movies (Page {filters.page})`}
+              items={movies}
+              onItemClick={handleItemClick}
+            />
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="pagination" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px',
+            margin: '40px 0',
+            color: 'white'
+          }}>
+            <button
+              disabled={filters.page === 1}
+              onClick={() => handlePageChange(filters.page - 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === 1 ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === 1 ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === 1 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Previous
+            </button>
+            
+            <span>Page <strong>{filters.page}</strong> of {totalPages}</span>
+            
+            <button
+              disabled={filters.page === totalPages}
+              onClick={() => handlePageChange(filters.page + 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === totalPages ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === totalPages ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === totalPages ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
 
       {isModalOpen && selectedItem && (
         <Modal item={selectedItem} onClose={closeModal} />
