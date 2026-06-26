@@ -22,6 +22,8 @@
 - Mobile responsive and fast page loading
 - Movies, TV Shows and Popular page with Advance Filter Option
 - With dynamic multi-searching feature
+- Added better pagination for Movies, TV Shows and Popular
+- Different servers with less Ad Popups.
 
 ### Watch Page
 
@@ -50,7 +52,7 @@ If you want to convert your images into WebP format, read [scripts/README.md](ht
 ```bash
 git clone https://github.com/cd-Crypton/mstream.git
 cd mstream/mstream
-npm install
+pnpm install
 ```
 
 ### 3. Refer the <a href="https://github.com/cd-Crypton/mstream/blob/main/.env.example">.env.example</a> to set your own .env file.
@@ -71,7 +73,7 @@ Host your own instance of <a href="https://mstream.eu.cc/">MSTREAM</a> on Cloudf
 - Project Name: `mstream or whatever name you want - just make sure to edit wrangler.jsonc`
 - Production Branch: `main`
 - Framework Preset: `None`
-- Build Command: `npm run build`
+- Build Command: `pnpm run build`
 - Build Output Directory: `dist`
 - Root Directory: `mstream`
 - After successful deployment, go to Settings >> Variables and Secrets >> Then the following details in <a href="https://github.com/cd-Crypton/mstream/blob/main/.env.example">.env.example</a>
