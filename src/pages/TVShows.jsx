@@ -12,7 +12,7 @@ const TVShows = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // TMDB API caps discover results at 500 pages max
-  const totalPages = 500;
+  const totalPages = 300;
 
   // Initialize filters from URL or defaults
   const [filters, setFilters] = useState({
