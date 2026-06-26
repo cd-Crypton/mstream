@@ -28,7 +28,7 @@ const Watch = () => {
     },
     { 
       name: 'Server 2', 
-      getUrl: (s, e) => `https://vidsrc.net/embed/${type}/?tmdb=${id}${type === 'tv' ? `&season=${s}&episode=${e}` : ''}` 
+      getUrl: (s, e) => `https://z.zxcstream.xyz/player/${type}/${id}/${type === 'tv' ? `${s}-${e}` : ''}` 
     },
     { 
       name: 'Server 3', 
