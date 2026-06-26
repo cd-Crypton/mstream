@@ -23,32 +23,28 @@ const Watch = () => {
 
   const servers = [
     { 
-      name: 'Server 1', 
-      getUrl: (s, e) => `https://vidsrc.to/embed/${type}/${id}/${type === 'tv' ? `${s}-${e}` : ''}` 
+      name: 'Cinezo', 
+      getUrl: (s, e) => `https://api.cinezo.net/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'Server 2', 
-      getUrl: (s, e) => `https://z.zxcstream.xyz/player/${type}/${id}/${type === 'tv' ? `${s}-${e}` : ''}` 
+      name: 'ZXCStream', 
+      getUrl: (s, e) => `https://z.zxcstream.xyz/player/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'Server 3', 
-      getUrl: (s, e) => `https://player.videasy.net/${type}/${id}${type === 'tv' ? `/${s}/${e}` : ''}` 
+      name: 'VAPlayer', 
+      getUrl: (s, e) => `https://vaplayer.ru/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'Server 4', 
-      getUrl: (s, e) => `https://www.2embed.cc/embed/${type}/${id}${type === 'tv' ? `/${s}/${e}` : ''}` 
+      name: 'VIDPlay', 
+      getUrl: (s, e) => `https://vidplays.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'Server 5', 
-      getUrl: (s, e) => `https://vidlink.pro/embed/${type}/${id}${type === 'tv' ? `/${s}/${e}` : ''}` 
+      name: 'VIDZen', 
+      getUrl: (s, e) => `https://vidzen.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'Server 6', 
-      getUrl: (s, e) => `https://vidsrc.xyz/embed/${type}/${id}${type === 'tv' ? `/${s}/${e}` : ''}` 
-    },
-    { 
-      name: 'Server 7', 
-      getUrl: (s, e) => `https://vidsrc.cc/v2/embed/${type}/${id}${type === 'tv' ? `/${s}/${e}` : ''}` 
+      name: 'CINESrc', 
+      getUrl: (s, e) => `https://cinesrc.net/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     }
   ];
 
