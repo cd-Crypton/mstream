@@ -23,27 +23,27 @@ const Watch = () => {
 
   const servers = [
     { 
-      name: 'Cinezo', 
+      name: 'Server 1', 
       getUrl: (s, e) => `https://api.cinezo.net/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'ZXCStream', 
+      name: 'Server 2', 
       getUrl: (s, e) => `https://z.zxcstream.xyz/player/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'VAPlayer', 
+      name: 'Server 3', 
       getUrl: (s, e) => `https://vaplayer.ru/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'VIDPlay', 
+      name: 'Server 4', 
       getUrl: (s, e) => `https://vidplays.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'VIDZen', 
+      name: 'Server 5', 
       getUrl: (s, e) => `https://vidzen.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     },
     { 
-      name: 'CINESrc', 
+      name: 'Server 6', 
       getUrl: (s, e) => `https://cinesrc.net/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
     }
   ];
