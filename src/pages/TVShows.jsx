@@ -207,7 +207,7 @@ const TVShows = () => {
         <>
           <div className="content-rows">
             <MovieRow
-              title={`TV Shows (Page {filters.page})`}
+              title={`TV Shows (Page ${filters.page})`}
               items={tvShows}
               onItemClick={handleItemClick}
             />

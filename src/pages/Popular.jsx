@@ -207,7 +207,7 @@ const Popular = () => {
         <>
           <div className="content-rows">
             <MovieRow
-              title={`Popular Movies (Page {filters.page})`}
+              title={`Popular Movies (Page ${filters.page})`}
               items={movies}
               onItemClick={handleItemClick}
             />

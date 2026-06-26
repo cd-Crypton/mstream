@@ -214,7 +214,7 @@ const Movies = () => {
         <>
           <div className="content-rows">
             <MovieRow
-              title={`Movies (Page {filters.page})`}
+              title={`Movies (Page ${filters.page})`}
               items={movies}
               onItemClick={handleItemClick}
             />
