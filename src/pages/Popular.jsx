@@ -11,6 +11,9 @@ const Popular = () => {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // TMDB API caps discover/popular list endpoints at a 500-page limit
+  const totalPages = 300;
+
   // Initialize filters from URL or defaults
   const [filters, setFilters] = useState({
     include_adult: searchParams.get('include_adult') === 'true' || false,
@@ -101,6 +104,12 @@ const Popular = () => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
 
+  // Dedicated pagination handler to keep filter states while changing pages
+  const handlePageChange = (newPage) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Return view to top smoothly
+  };
+
   const clearFilters = () => {
     setFilters({
       include_adult: false,
@@ -109,15 +118,6 @@ const Popular = () => {
       page: 1
     });
   };
-
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-spinner"></div>
-        <p>Loading popular movies...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="movies-page">
@@ -197,13 +197,65 @@ const Popular = () => {
         </div>
       </div>
 
-      <div className="content-rows">
-        <MovieRow
-          title={`Popular Movies (${movies.length})`}
-          items={movies}
-          onItemClick={handleItemClick}
-        />
-      </div>
+      {/* Conditionally swaps content block layout seamlessly when navigating pages */}
+      {loading ? (
+        <div className="loading-screen" style={{ minHeight: '300px' }}>
+          <div className="loading-spinner"></div>
+          <p>Loading popular movies...</p>
+        </div>
+      ) : (
+        <>
+          <div className="content-rows">
+            <MovieRow
+              title={`Popular Movies (Page {filters.page})`}
+              items={movies}
+              onItemClick={handleItemClick}
+            />
+          </div>
+
+          {/* Pagination Component Context */}
+          <div className="pagination" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px',
+            margin: '40px 0',
+            color: 'white'
+          }}>
+            <button
+              disabled={filters.page === 1}
+              onClick={() => handlePageChange(filters.page - 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === 1 ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === 1 ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === 1 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Previous
+            </button>
+            
+            <span>Page <strong>{filters.page}</strong> of {totalPages}</span>
+            
+            <button
+              disabled={filters.page === totalPages}
+              onClick={() => handlePageChange(filters.page + 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === totalPages ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === totalPages ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === totalPages ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
 
       {isModalOpen && selectedItem && (
         <Modal item={selectedItem} onClose={closeModal} />
