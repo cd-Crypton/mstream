@@ -1,4 +1,3 @@
-// TVShows.jsx
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MovieRow from '../components/MovieRow';
@@ -11,6 +10,9 @@ const TVShows = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // TMDB API caps discover results at 500 pages max
+  const totalPages = 500;
 
   // Initialize filters from URL or defaults
   const [filters, setFilters] = useState({
@@ -84,6 +86,12 @@ const TVShows = () => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
 
+  // Dedicated pagination handler that keeps current filtering variables intact
+  const handlePageChange = (newPage) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const clearFilters = () => {
     setFilters({
       sort_by: 'popularity.desc',
@@ -93,15 +101,6 @@ const TVShows = () => {
       page: 1
     });
   };
-
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-spinner"></div>
-        <p>Loading TV shows...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="tv-shows-page">
@@ -198,13 +197,65 @@ const TVShows = () => {
         </div>
       </div>
 
-      <div className="content-rows">
-        <MovieRow
-          title={`TV Shows (${tvShows.length})`}
-          items={tvShows}
-          onItemClick={handleItemClick}
-        />
-      </div>
+      {/* Inline Loading Logic preserves layout shell during API requests */}
+      {loading ? (
+        <div className="loading-screen" style={{ minHeight: '300px' }}>
+          <div className="loading-spinner"></div>
+          <p>Loading TV shows...</p>
+        </div>
+      ) : (
+        <>
+          <div className="content-rows">
+            <MovieRow
+              title={`TV Shows (Page {filters.page})`}
+              items={tvShows}
+              onItemClick={handleItemClick}
+            />
+          </div>
+
+          {/* Pagination Component */}
+          <div className="pagination" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px',
+            margin: '40px 0',
+            color: 'white'
+          }}>
+            <button
+              disabled={filters.page === 1}
+              onClick={() => handlePageChange(filters.page - 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === 1 ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === 1 ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === 1 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Previous
+            </button>
+            
+            <span>Page <strong>{filters.page}</strong> of {totalPages}</span>
+            
+            <button
+              disabled={filters.page === totalPages}
+              onClick={() => handlePageChange(filters.page + 1)}
+              style={{
+                padding: '8px 16px',
+                background: filters.page === totalPages ? '#333' : 'var(--netflix-red, #e50914)',
+                color: filters.page === totalPages ? '#aaa' : 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: filters.page === totalPages ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
 
       {isModalOpen && selectedItem && (
         <Modal item={selectedItem} onClose={closeModal} />
