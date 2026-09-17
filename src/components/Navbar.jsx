@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useLibrary } from "../context/LibraryContext";
 import {
   SearchIcon,
   CloseIcon,
@@ -7,6 +8,7 @@ import {
   TvIcon,
   FlameIcon,
   StarIcon,
+  BookmarkIcon,
 } from "./Icons";
 
 const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
@@ -14,6 +16,8 @@ const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const searchTimeoutRef = useRef(null);
+  const { libraryCount } = useLibrary();
   const location = useLocation();
 
   useEffect(() => {
@@ -30,6 +34,15 @@ const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const getPosterUrl = (posterPath) => {
     if (!posterPath) return null;
     return `https://image.tmdb.org/t/p/w92${posterPath}`;
@@ -38,12 +51,28 @@ const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    if (onSearch) {
-      onSearch(value);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
+
+    if (!value.trim()) {
+      if (onSearch) onSearch("");
+      return;
+    }
+
+    // Rate-limiting debounce for search typing
+    searchTimeoutRef.current = setTimeout(() => {
+      if (onSearch) {
+        onSearch(value);
+      }
+    }, 280);
   };
 
   const handleClearSearch = () => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     setSearchQuery("");
     if (onSearch) {
       onSearch("");
@@ -114,6 +143,16 @@ const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
             className={`nav-link ${isCurrent("/popular") ? "active" : ""}`}
           >
             Popular
+          </Link>
+          <Link
+            to="/library"
+            className={`nav-link ${isCurrent("/library") ? "active" : ""}`}
+          >
+            <BookmarkIcon size={16} />
+            Library
+            {libraryCount > 0 && (
+              <span className="nav-badge">{libraryCount}</span>
+            )}
           </Link>
         </div>
 
@@ -274,6 +313,17 @@ const Navbar = ({ onSearch, searchResults, onItemClick, isSearching }) => {
             >
               <FlameIcon size={18} fill="currentColor" />
               Popular
+            </Link>
+            <Link
+              to="/library"
+              className={`nav-link ${isCurrent("/library") ? "active" : ""}`}
+              onClick={closeMenu}
+            >
+              <BookmarkIcon size={18} />
+              Library
+              {libraryCount > 0 && (
+                <span className="nav-badge">{libraryCount}</span>
+              )}
             </Link>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTMDB } from "../hooks/useTMDB";
+import { useLibrary } from "../context/LibraryContext";
 import {
   ArrowLeftIcon,
   StarIcon,
@@ -8,6 +9,8 @@ import {
   CalendarIcon,
   FilmIcon,
   TvIcon,
+  BookmarkIcon,
+  BookmarkCheckIcon,
 } from "../components/Icons";
 
 const Watch = () => {
@@ -17,6 +20,7 @@ const Watch = () => {
 
   const type = searchParams.get("type");
   const id = searchParams.get("id");
+  const { isInLibrary, toggleLibrary } = useLibrary();
 
   const [currentServer, setCurrentServer] = useState(0);
   const [currentSeason, setCurrentSeason] = useState(1);
@@ -174,6 +178,7 @@ const Watch = () => {
   }
 
   const title = contentInfo?.title || contentInfo?.name || "Watch";
+  const inLib = id ? isInLibrary(id, type) : false;
 
   return (
     <div className="watch-page">
@@ -185,11 +190,51 @@ const Watch = () => {
             Back to Browse
           </button>
 
-          {type === "tv" && (
-            <div className="season-episode-badge">
-              Season {currentSeason} • Episode {currentEpisode}
-            </div>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              type="button"
+              className="back-browse-btn"
+              onClick={() =>
+                toggleLibrary({
+                  id,
+                  type,
+                  media_type: type,
+                  title,
+                  name: title,
+                  poster_path: contentInfo?.poster_path,
+                  backdrop_path: contentInfo?.backdrop_path,
+                  vote_average: contentInfo?.vote_average,
+                  release_date:
+                    contentInfo?.release_date || contentInfo?.first_air_date,
+                  overview: contentInfo?.overview,
+                })
+              }
+              style={{
+                background: inLib ? "var(--brand-primary)" : undefined,
+                borderColor: inLib ? "var(--brand-hover)" : undefined,
+                color: inLib ? "#ffffff" : undefined,
+              }}
+              title={inLib ? "Remove from Library" : "Add to Library"}
+            >
+              {inLib ? (
+                <>
+                  <BookmarkCheckIcon size={16} />
+                  In Library
+                </>
+              ) : (
+                <>
+                  <BookmarkIcon size={16} />
+                  Add to Library
+                </>
+              )}
+            </button>
+
+            {type === "tv" && (
+              <div className="season-episode-badge">
+                Season {currentSeason} • Episode {currentEpisode}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

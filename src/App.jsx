@@ -10,6 +10,8 @@ import About from "./pages/About";
 import Disclaimer from "./pages/Disclaimer";
 import { useTMDB } from "./hooks/useTMDB";
 import Footer from "./components/Footer";
+import Library from "./pages/Library";
+import { LibraryProvider } from "./context/LibraryContext";
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
@@ -55,28 +57,31 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Navbar
-        onSearch={handleSearch}
-        searchResults={searchResults}
-        onItemClick={handleItemClick}
-        isSearching={isSearching}
-      />
+    <LibraryProvider>
+      <div className="App">
+        <Navbar
+          onSearch={handleSearch}
+          searchResults={searchResults}
+          onItemClick={handleItemClick}
+          isSearching={isSearching}
+        />
 
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/movies" element={<Movies />} />
-          <Route path="/tv-shows" element={<TVShows />} />
-          <Route path="/popular" element={<Popular />} />
-          <Route path="/watch" element={<Watch />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/disclaimer" element={<Disclaimer />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/movies" element={<Movies />} />
+            <Route path="/tv-shows" element={<TVShows />} />
+            <Route path="/popular" element={<Popular />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/watch" element={<Watch />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </LibraryProvider>
   );
 }
 

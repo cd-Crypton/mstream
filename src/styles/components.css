@@ -91,6 +91,21 @@
   box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
 }
 
+.nav-badge {
+  background: var(--brand-primary);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  margin-left: 4px;
+  box-shadow: 0 0 10px var(--brand-glow);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.4;
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -473,6 +488,47 @@
 .movie-card:hover .card-image-container img {
   transform: scale(1.06);
   filter: brightness(1.05);
+}
+
+.card-bookmark-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: rgba(7, 7, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 6;
+  transition: all var(--transition-fast);
+  opacity: 0.85;
+}
+
+.movie-card:hover .card-bookmark-btn,
+.card-bookmark-btn.in-library {
+  opacity: 1;
+}
+
+.card-bookmark-btn:hover {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px var(--brand-glow);
+}
+
+.card-bookmark-btn.in-library {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--brand-glow);
 }
 
 /* Bottom gradient hover reveal - does NOT obscure the poster with opaque solid red */

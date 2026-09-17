@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { cachedFetch, CACHE_TTL, clearApiCache } from "../services/apiCache";
+import { rateLimiter } from "../services/rateLimiter";
 
 const POSTER_URL = "https://image.tmdb.org/t/p/w500";
 const BACKDROP_URL = "https://image.tmdb.org/t/p/w1280";
@@ -28,39 +30,48 @@ export const useTMDB = () => {
     [getApiBaseUrl],
   );
 
+  /**
+   * Safe fetch combining client-side rate limiting, in-flight request deduplication,
+   * and multi-tier in-memory/sessionStorage caching.
+   */
+  const safeFetch = useCallback(async (url, ttl = CACHE_TTL.MEDIUM) => {
+    return rateLimiter.execute(() =>
+      cachedFetch(
+        url,
+        async () => {
+          const res = await fetch(url);
+          if (!res.ok) {
+            const errorText = await res.text().catch(() => "");
+            const err = new Error(
+              `HTTP error! status: ${res.status}, response: ${errorText}`,
+            );
+            err.status = res.status;
+            throw err;
+          }
+          return await res.json();
+        },
+        ttl,
+      ),
+    );
+  }, []);
+
   const checkApiStatus = useCallback(async () => {
     try {
       const testUrl = buildUrl("/configuration");
-      const testResponse = await fetch(testUrl);
-
-      if (testResponse.ok) {
-        setApiStatus("working");
-      } else {
-        setApiStatus("error");
-        console.error("API test failed:", await testResponse.text());
-      }
+      await safeFetch(testUrl, CACHE_TTL.STATIC);
+      setApiStatus("working");
     } catch (error) {
       console.error("API connection error:", error);
       setApiStatus("error");
     }
-  }, [buildUrl]);
+  }, [buildUrl, safeFetch]);
 
   const fetchGenres = useCallback(async () => {
     try {
-      const [movieRes, tvRes] = await Promise.all([
-        fetch(buildUrl("/genre/movie/list")),
-        fetch(buildUrl("/genre/tv/list")),
+      const [movieData, tvData] = await Promise.all([
+        safeFetch(buildUrl("/genre/movie/list"), CACHE_TTL.STATIC),
+        safeFetch(buildUrl("/genre/tv/list"), CACHE_TTL.STATIC),
       ]);
-
-      if (!movieRes.ok) {
-        throw new Error(`Movie genres failed: ${movieRes.status}`);
-      }
-      if (!tvRes.ok) {
-        throw new Error(`TV genres failed: ${tvRes.status}`);
-      }
-
-      const movieData = await movieRes.json();
-      const tvData = await tvRes.json();
 
       const movieMap = new Map(
         movieData.genres?.map((genre) => [genre.id, genre.name]) || [],
@@ -74,55 +85,34 @@ export const useTMDB = () => {
     } catch (error) {
       console.error("Failed to fetch genres:", error);
     }
-  }, [buildUrl]);
+  }, [buildUrl, safeFetch]);
 
-  // Memoize all fetch functions
   const fetchNowPlaying = useCallback(async () => {
     try {
       const url = buildUrl("/movie/now_playing", {
         language: "en-US",
         page: 1,
       });
-
-      const res = await fetch(url);
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(
-          `HTTP error! status: ${res.status}, response: ${errorText}`,
-        );
-      }
-
-      const data = await res.json();
+      const data = await safeFetch(url, CACHE_TTL.MEDIUM);
       return data.results || [];
     } catch (error) {
       console.error("Failed to fetch now playing movies:", error);
       throw error;
     }
-  }, [buildUrl]);
+  }, [buildUrl, safeFetch]);
 
   const fetchTrending = useCallback(
     async (type, timeWindow = "week") => {
       try {
         const url = buildUrl(`/trending/${type}/${timeWindow}`);
-
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(
-            `HTTP error! status: ${res.status}, response: ${errorText}`,
-          );
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.MEDIUM);
         return data.results || [];
       } catch (error) {
         console.error(`Failed to fetch trending ${type}:`, error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchTrendingAnime = useCallback(async () => {
@@ -132,25 +122,14 @@ export const useTMDB = () => {
         with_keywords: 210024,
         sort_by: "popularity.desc",
       });
-
-      const res = await fetch(url);
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(
-          `HTTP error! status: ${res.status}, response: ${errorText}`,
-        );
-      }
-
-      const data = await res.json();
+      const data = await safeFetch(url, CACHE_TTL.MEDIUM);
       return data.results || [];
     } catch (error) {
       console.error("Failed to fetch anime:", error);
       throw error;
     }
-  }, [buildUrl]);
+  }, [buildUrl, safeFetch]);
 
-  // Add useCallback to all other fetch functions similarly
   const searchTMDB = useCallback(
     async (query) => {
       if (!query.trim()) return [];
@@ -162,16 +141,7 @@ export const useTMDB = () => {
           language: "en-US",
         });
 
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(
-            `HTTP error! status: ${res.status}, response: ${errorText}`,
-          );
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.SHORT);
 
         return (
           data.results?.filter((item) => {
@@ -184,66 +154,48 @@ export const useTMDB = () => {
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchCredits = useCallback(
     async (type, id) => {
       try {
         const url = buildUrl(`/${type}/${id}/credits`);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.LONG);
         return data.cast?.slice(0, 4).map((actor) => actor.name) || [];
       } catch (error) {
         console.error("Failed to fetch credits:", error);
         return [];
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchSeasonEpisodes = useCallback(
     async (tvId, seasonNumber) => {
       try {
         const url = buildUrl(`/tv/${tvId}/season/${seasonNumber}`);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.LONG);
         return data.episodes || [];
       } catch (error) {
         console.error("Failed to fetch episodes:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchTVDetails = useCallback(
     async (tvId) => {
       try {
         const url = buildUrl(`/tv/${tvId}`);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        return await res.json();
+        return await safeFetch(url, CACHE_TTL.LONG);
       } catch (error) {
         console.error("Failed to fetch TV details:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchDiscoverMovies = useCallback(
@@ -257,24 +209,14 @@ export const useTMDB = () => {
           page: 1,
           ...params,
         });
-
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(
-            `HTTP error! status: ${res.status}, response: ${errorText}`,
-          );
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.MEDIUM);
         return data.results || [];
       } catch (error) {
         console.error("Failed to fetch discover movies:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchDiscoverTV = useCallback(
@@ -288,64 +230,42 @@ export const useTMDB = () => {
           page: 1,
           ...params,
         });
-
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(
-            `HTTP error! status: ${res.status}, response: ${errorText}`,
-          );
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.MEDIUM);
         return data.results || [];
       } catch (error) {
         console.error("Failed to fetch discover TV:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchMovieRecommendations = useCallback(
     async (movieId) => {
       try {
         const url = buildUrl(`/movie/${movieId}/recommendations`);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.LONG);
         return data.results || [];
       } catch (error) {
         console.error("Failed to fetch movie recommendations:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   const fetchTVRecommendations = useCallback(
     async (tvId) => {
       try {
         const url = buildUrl(`/tv/${tvId}/recommendations`);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
+        const data = await safeFetch(url, CACHE_TTL.LONG);
         return data.results || [];
       } catch (error) {
         console.error("Failed to fetch TV recommendations:", error);
         throw error;
       }
     },
-    [buildUrl],
+    [buildUrl, safeFetch],
   );
 
   useEffect(() => {
@@ -365,7 +285,6 @@ export const useTMDB = () => {
     };
   }, [checkApiStatus, fetchGenres]);
 
-  // Memoize constants to prevent recreation
   const constants = useMemo(
     () => ({
       POSTER_URL,
@@ -389,6 +308,7 @@ export const useTMDB = () => {
     fetchDiscoverTV,
     fetchMovieRecommendations,
     fetchTVRecommendations,
+    clearApiCache,
     ...constants,
   };
 };

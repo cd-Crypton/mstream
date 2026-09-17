@@ -1,9 +1,17 @@
 import { useCallback, useEffect, memo } from "react";
 import { useTMDB } from "../hooks/useTMDB";
-import { CloseIcon, PlayIcon, StarIcon } from "./Icons";
+import { useLibrary } from "../context/LibraryContext";
+import {
+  CloseIcon,
+  PlayIcon,
+  StarIcon,
+  BookmarkIcon,
+  BookmarkCheckIcon,
+} from "./Icons";
 
 const Modal = memo(({ item, onClose }) => {
   const { POSTER_URL } = useTMDB();
+  const { isInLibrary, toggleLibrary } = useLibrary();
 
   const handleBackdropClick = useCallback(
     (e) => {
@@ -24,11 +32,14 @@ const Modal = memo(({ item, onClose }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+  const targetType =
+    item?.type || item?.media_type || (item?.first_air_date ? "tv" : "movie");
+
+  const inLib = item ? isInLibrary(item.id, targetType) : false;
+
   const playButtonClick = useCallback(() => {
-    const targetType =
-      item.type || item.media_type || (item.first_air_date ? "tv" : "movie");
     window.location.href = `/watch?type=${targetType}&id=${item.id}`;
-  }, [item]);
+  }, [item, targetType]);
 
   if (!item) return null;
 
@@ -128,6 +139,32 @@ const Modal = memo(({ item, onClose }) => {
               >
                 <PlayIcon size={18} />
                 Watch Now
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleLibrary(item)}
+                className={`watch-btn ${inLib ? "primary" : "secondary"}`}
+                style={{
+                  background: inLib
+                    ? "var(--brand-primary)"
+                    : "rgba(255, 255, 255, 0.08)",
+                  border: inLib
+                    ? "1px solid var(--brand-hover)"
+                    : "1px solid var(--border-default)",
+                  color: "#ffffff",
+                }}
+              >
+                {inLib ? (
+                  <>
+                    <BookmarkCheckIcon size={18} />
+                    In Library
+                  </>
+                ) : (
+                  <>
+                    <BookmarkIcon size={18} />
+                    Add to Library
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useTMDB } from "../hooks/useTMDB";
-import { PlayIcon, InfoIcon, StarIcon } from "./Icons";
+import { useLibrary } from "../context/LibraryContext";
+import {
+  PlayIcon,
+  InfoIcon,
+  StarIcon,
+  BookmarkIcon,
+  BookmarkCheckIcon,
+} from "./Icons";
 
 const BannerSlider = ({ movies, onItemClick }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { BACKDROP_URL } = useTMDB();
+  const { isInLibrary, toggleLibrary } = useLibrary();
 
   useEffect(() => {
     if (!movies || movies.length <= 1) return;
@@ -24,6 +32,11 @@ const BannerSlider = ({ movies, onItemClick }) => {
 
   const currentMovie = movies[currentSlide];
   if (!currentMovie) return null;
+
+  const inLib = isInLibrary(
+    currentMovie.id,
+    currentMovie.media_type || (currentMovie.first_air_date ? "tv" : "movie"),
+  );
 
   const title = currentMovie.title || currentMovie.name;
   const year =
@@ -89,6 +102,24 @@ const BannerSlider = ({ movies, onItemClick }) => {
                   >
                     <InfoIcon size={18} />
                     More Info
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${inLib ? "btn-primary" : "btn-secondary"}`}
+                    onClick={() => toggleLibrary(currentMovie)}
+                    title={inLib ? "Remove from Library" : "Add to Library"}
+                  >
+                    {inLib ? (
+                      <>
+                        <BookmarkCheckIcon size={18} />
+                        In Library
+                      </>
+                    ) : (
+                      <>
+                        <BookmarkIcon size={18} />
+                        Add to Library
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

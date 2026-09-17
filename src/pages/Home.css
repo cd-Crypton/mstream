@@ -7,7 +7,7 @@
 .time-window-toggle-container {
   display: flex;
   justify-content: center;
-  margin: 28px 0 20px;
+  margin: 36px 0 44px;
   padding: 0 20px;
   position: relative;
   z-index: 10;
@@ -102,11 +102,17 @@
   transform: translateX(24px);
 }
 
+/* Home Page Content Rows Layout Override */
+.home-page .content-rows {
+  margin-top: 0;
+}
+
 /* Side-by-Side Trending Section */
 .trending-side-by-side {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
+  margin-top: 16px;
   margin-bottom: 48px;
 }
 
@@ -123,9 +129,14 @@
 
 /* Responsive Rules */
 @media (max-width: 1024px) {
+  .home-page .content-rows {
+    margin-top: 0;
+  }
+
   .trending-side-by-side {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 2.25rem;
+    margin-top: 18px;
   }
 
   .trending-column .movie-row .grid-container,
@@ -135,9 +146,13 @@
 }
 
 @media (max-width: 640px) {
+  .home-page .content-rows {
+    margin-top: 0;
+  }
+
   .time-window-toggle-container {
     padding: 0 12px;
-    margin: 20px 0 16px;
+    margin: 28px 0 44px;
   }
 
   .time-window-toggle {
@@ -154,8 +169,9 @@
   }
 
   .trending-side-by-side {
-    gap: 1.5rem;
-    margin-bottom: 32px;
+    margin-top: 24px;
+    gap: 2rem;
+    margin-bottom: 36px;
   }
 
   .trending-column .movie-row .grid-container,
@@ -166,9 +182,18 @@
 }
 
 @media (max-width: 480px) {
+  .home-page .content-rows {
+    margin-top: 4px;
+  }
+
+  .time-window-toggle-container {
+    margin: 24px 0 44px;
+  }
+
   .trending-side-by-side {
-    gap: 1.25rem;
-    margin-bottom: 24px;
+    margin-top: 28px;
+    gap: 1.75rem;
+    margin-bottom: 28px;
   }
 
   .trending-column .movie-row .grid-container,
