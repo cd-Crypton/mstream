@@ -1,23 +1,33 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import MovieCard from './MovieCard';
+import { useState, useRef, useEffect, useCallback } from "react";
+import MovieCard from "./MovieCard";
+import { CloseIcon, SearchIcon } from "./Icons";
 
-const SearchModal = ({ searchResults, onSearch, onClose, onItemClick, isSearching }) => {
-  const [query, setQuery] = useState('');
+const SearchModal = ({
+  searchResults,
+  onSearch,
+  onClose,
+  onItemClick,
+  isSearching,
+}) => {
+  const [query, setQuery] = useState("");
   const inputRef = useRef(null);
-  const debounceTimer = useRef(null);
+  const debounceTimerRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const debouncedSearch = useCallback((value) => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-    debounceTimer.current = setTimeout(() => {
-      onSearch(value);
-    }, 300);
-  }, [onSearch]);
+  const debouncedSearch = useCallback(
+    (value) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        onSearch(value);
+      }, 300);
+    },
+    [onSearch],
+  );
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -27,8 +37,8 @@ const SearchModal = ({ searchResults, onSearch, onClose, onItemClick, isSearchin
 
   useEffect(() => {
     return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
     };
   }, []);
@@ -45,59 +55,91 @@ const SearchModal = ({ searchResults, onSearch, onClose, onItemClick, isSearchin
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       onClose();
     }
   };
 
   const handleClose = () => {
-    setQuery('');
+    setQuery("");
     onClose();
   };
 
   return (
-    <div 
-      className="search-modal-overlay" 
+    <div
+      className="modal-overlay"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
     >
-      <div className="search-modal-content">
-        <button className="search-close" onClick={handleClose}>×</button>
-        
-        <div className="search-input-container">
+      <div className="modal-content search-modal-content">
+        <button
+          className="modal-close"
+          onClick={handleClose}
+          aria-label="Close search"
+        >
+          <CloseIcon size={20} />
+        </button>
+
+        <div style={{ position: "relative", marginBottom: "28px" }}>
+          <span
+            style={{
+              position: "absolute",
+              left: "16px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-muted)",
+            }}
+          >
+            <SearchIcon size={20} />
+          </span>
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search for movies, TV shows..."
+            placeholder="Search movies, TV series, anime..."
             value={query}
             onChange={handleInputChange}
-            className="search-input"
+            className="navbar-search-input"
+            style={{
+              height: "48px",
+              paddingLeft: "48px",
+              fontSize: "1.05rem",
+              borderRadius: "var(--radius-md)",
+            }}
             autoComplete="off"
           />
         </div>
 
-        <div className="search-results">
-          {searchResults.length > 0 ? (
-            <div className="results-grid">
-              {searchResults.map(item => (
-                <MovieCard 
-                  key={`${item.id}-${item.media_type}`}
+        <div
+          className="search-results"
+          style={{ maxHeight: "60vh", overflowY: "auto" }}
+        >
+          {searchResults && searchResults.length > 0 ? (
+            <div className="grid-container">
+              {searchResults.map((item) => (
+                <MovieCard
+                  key={`${item.id}-${item.media_type || "item"}`}
                   item={item}
                   onClick={() => handleItemSelect(item)}
                 />
               ))}
             </div>
           ) : query && !isSearching ? (
-            <div className="no-results">
-              <p>No results found for "{query}"</p>
+            <div className="search-no-results">
+              <p>No titles found matching "{query}"</p>
             </div>
           ) : query && isSearching ? (
             <div className="search-loading">
-              <p>Searching...</p>
+              <div
+                className="loading-spinner"
+                style={{ margin: "0 auto 12px" }}
+              ></div>
+              <p>Searching titles...</p>
             </div>
           ) : (
-            <div className="search-placeholder">
-              <p>Start typing to search for movies and TV shows</p>
+            <div className="search-no-results">
+              <p>Start typing to search across movies, TV shows, and anime</p>
             </div>
           )}
         </div>

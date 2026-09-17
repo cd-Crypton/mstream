@@ -1,29 +1,35 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import globals from "globals";
+import eslintJs from "@eslint/js";
+import eslintReact from "@eslint-react/eslint-plugin";
+import { defineConfig } from "eslint/config";
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+export default defineConfig({
+  files: ["**/*.{js,jsx}"],
+
+  extends: [
+    eslintJs.configs.recommended,
+    eslintReact.configs.recommended,
+  ],
+
+  languageOptions: {
+    globals: {
+      ...globals.browser,
+    },
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
       },
     },
-    rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-    },
   },
-])
+
+  rules: {
+    "@eslint-react/no-missing-key": "warn",
+    "@eslint-react/no-unused-class-component-members": "warn",
+    "@eslint-react/no-unused-state": "warn",
+    "@eslint-react/no-use-context": "warn",
+    "@eslint-react/naming-convention-id-name": "warn",
+    "@eslint-react/static-components": "warn",
+    "no-unused-vars": "warn",
+    "no-undef": "warn",
+  },
+});

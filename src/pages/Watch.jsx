@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useTMDB } from '../hooks/useTMDB';
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useTMDB } from "../hooks/useTMDB";
+import {
+  ArrowLeftIcon,
+  StarIcon,
+  ClockIcon,
+  CalendarIcon,
+  FilmIcon,
+  TvIcon,
+} from "../components/Icons";
 
 const Watch = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  
-  const type = searchParams.get('type');
-  const id = searchParams.get('id');
-  
+
+  const type = searchParams.get("type");
+  const id = searchParams.get("id");
+
   const [currentServer, setCurrentServer] = useState(0);
   const [currentSeason, setCurrentSeason] = useState(1);
   const [currentEpisode, setCurrentEpisode] = useState(1);
@@ -19,33 +27,39 @@ const Watch = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { fetchMovieRecommendations, fetchTVRecommendations, POSTER_URL } = useTMDB();
+  const { fetchMovieRecommendations, fetchTVRecommendations } = useTMDB();
 
   const servers = [
-    { 
-      name: 'Server 1', 
-      getUrl: (s, e) => `https://api.cinezo.net/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
+    {
+      name: "Server 1",
+      getUrl: (s, e) =>
+        `https://api.cinezo.net/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
-    { 
-      name: 'Server 2', 
-      getUrl: (s, e) => `https://z.zxcstream.xyz/player/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
+    {
+      name: "Server 2",
+      getUrl: (s, e) =>
+        `https://z.zxcstream.xyz/player/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
-    { 
-      name: 'Server 3', 
-      getUrl: (s, e) => `https://vaplayer.ru/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
+    {
+      name: "Server 3",
+      getUrl: (s, e) =>
+        `https://vaplayer.ru/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
-    { 
-      name: 'Server 4', 
-      getUrl: (s, e) => `https://vidplays.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
+    {
+      name: "Server 4",
+      getUrl: (s, e) =>
+        `https://vidplays.fun/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
-    { 
-      name: 'Server 5', 
-      getUrl: (s, e) => `https://vidzen.fun/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
+    {
+      name: "Server 5",
+      getUrl: (s, e) =>
+        `https://vidzen.fun/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
-    { 
-      name: 'Server 6', 
-      getUrl: (s, e) => `https://cinesrc.net/embed/${type}/${id}/${type === 'tv' ? `/${s}/${e}` : ''}` 
-    }
+    {
+      name: "Server 6",
+      getUrl: (s, e) =>
+        `https://cinesrc.net/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
   ];
 
   useEffect(() => {
@@ -59,20 +73,18 @@ const Watch = () => {
   const fetchContentData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch basic content info
+
       const contentRes = await fetch(`/api/${type}/${id}`);
       const contentData = await contentRes.json();
       setContentInfo(contentData);
 
-      // Fetch recommendations
       await fetchRecommendations();
 
-      if (type === 'tv') {
+      if (type === "tv") {
         await fetchSeasons();
       }
     } catch (error) {
-      console.error('Failed to fetch content data:', error);
+      console.error("Failed to fetch content data:", error);
     } finally {
       setLoading(false);
     }
@@ -81,14 +93,14 @@ const Watch = () => {
   const fetchRecommendations = async () => {
     try {
       let recommendationsData = [];
-      if (type === 'movie') {
+      if (type === "movie") {
         recommendationsData = await fetchMovieRecommendations(id);
-      } else if (type === 'tv') {
+      } else if (type === "tv") {
         recommendationsData = await fetchTVRecommendations(id);
       }
-      setRecommendations(recommendationsData.slice(0, 10)); // Limit to 10 recommendations
+      setRecommendations(recommendationsData.slice(0, 8));
     } catch (error) {
-      console.error('Failed to fetch recommendations:', error);
+      console.error("Failed to fetch recommendations:", error);
       setRecommendations([]);
     }
   };
@@ -105,7 +117,7 @@ const Watch = () => {
         await fetchEpisodes(validSeasons[0].season_number);
       }
     } catch (error) {
-      console.error('Failed to fetch seasons:', error);
+      console.error("Failed to fetch seasons:", error);
     }
   };
 
@@ -116,7 +128,7 @@ const Watch = () => {
       setEpisodes(data.episodes || []);
       setCurrentEpisode(1);
     } catch (error) {
-      console.error('Failed to fetch episodes:', error);
+      console.error("Failed to fetch episodes:", error);
     }
   };
 
@@ -131,63 +143,75 @@ const Watch = () => {
 
   const handleRecommendationClick = (recType, recId) => {
     navigate(`/watch?type=${recType}&id=${recId}`);
-    window.location.reload(); // Refresh to load new content
+    window.location.reload();
   };
 
   if (loading) {
     return (
-      <div className="watch-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading player...</p>
+      <div className="watch-page">
+        <div className="loading-screen">
+          <div className="loading-spinner"></div>
+          <p>Connecting to cinema stream...</p>
+        </div>
       </div>
     );
   }
 
   if (!type || !id) {
     return (
-      <div className="watch-error">
-        <div className="error-content">
-          <h1>Content Not Found</h1>
-          <p>The requested content could not be loaded.</p>
-          <button 
-            className="back-home-btn"
-            onClick={() => navigate('/')}
-          >
-            ← Back to Home
-          </button>
+      <div className="watch-page">
+        <div className="error-page">
+          <div className="error-content">
+            <h1>Content Not Found</h1>
+            <p>The requested media stream could not be loaded.</p>
+            <button className="back-home-btn" onClick={() => navigate("/")}>
+              <ArrowLeftIcon size={18} /> Back to Home
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
+  const title = contentInfo?.title || contentInfo?.name || "Watch";
+
   return (
     <div className="watch-page">
-      {/* Header */}
+      {/* Header Bar */}
       <div className="watch-header">
         <div className="watch-header-content">
-          <button
-            className="back-browse-btn"
-            onClick={() => navigate('/')}
-          >
-            ← Back to Browse
+          <button className="back-browse-btn" onClick={() => navigate("/")}>
+            <ArrowLeftIcon size={16} />
+            Back to Browse
           </button>
 
-          {type === 'tv' && (
+          {type === "tv" && (
             <div className="season-episode-badge">
-              S{currentSeason} • E{currentEpisode}
+              Season {currentSeason} • Episode {currentEpisode}
             </div>
           )}
         </div>
       </div>
 
+      {/* Modern Breadcrumb */}
       <div className="breadcrumb">
-        Home &gt;&gt; {type === 'movie' ? 'Movies' : 'TV Shows'} &gt;&gt; {contentInfo?.title || contentInfo?.name}
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+          Home
+        </span>
+        <span className="breadcrumb-separator">/</span>
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate(type === "movie" ? "/movies" : "/tv-shows")}
+        >
+          {type === "movie" ? "Movies" : "TV Shows"}
+        </span>
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-current">{title}</span>
       </div>
-      
+
       <div className="watch-container">
-        {/* Main Content Area */}
+        {/* Main Cinema Area */}
         <div className="main-content">
-          {/* Video Player Section */}
           <div className="video-player-section">
             <div className="video-container">
               <iframe
@@ -200,106 +224,235 @@ const Watch = () => {
               />
             </div>
 
-            {/* Details and Server Section */}
+            {/* Details and Server Controls */}
             <div className="controls-section">
               <div className="details-section">
-                <h3 className="section-title">Details</h3>
-                <div className="content-overview">
-                  {contentInfo?.overview || 'No overview available.'}
-                </div>
+                <h3 className="section-title">
+                  {type === "movie" ? (
+                    <FilmIcon size={20} />
+                  ) : (
+                    <TvIcon size={20} />
+                  )}
+                  {title}
+                </h3>
+                <p className="content-overview">
+                  {contentInfo?.overview ||
+                    "No overview description available for this title."}
+                </p>
               </div>
 
               <div className="server-dropdown-section">
                 <h3 className="section-title">Select Server</h3>
-                <select 
-                  value={currentServer}
-                  onChange={(e) => setCurrentServer(Number(e.target.value))}
-                  className="server-dropdown"
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "8px",
+                  }}
                 >
-                  {servers.map((server, index) => (
-                    <option className="serverList" key={index} value={index}>
-                      {server.name}
+                  {servers.map((server, index) => {
+                    const isCurrent = currentServer === index;
+                    return (
+                      <button
+                        key={server.name}
+                        type="button"
+                        onClick={() => setCurrentServer(index)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "6px",
+                          padding: "8px 12px",
+                          borderRadius: "var(--radius-md)",
+                          background: isCurrent
+                            ? "var(--brand-primary)"
+                            : "var(--bg-surface-elevated)",
+                          color: "#ffffff",
+                          border: isCurrent
+                            ? "1px solid var(--brand-hover)"
+                            : "1px solid var(--border-default)",
+                          cursor: "pointer",
+                          fontWeight: 600,
+                          fontSize: "0.84rem",
+                          transition: "all var(--transition-fast)",
+                          boxShadow: isCurrent
+                            ? "0 2px 10px var(--brand-glow)"
+                            : "none",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "6px",
+                            height: "6px",
+                            borderRadius: "50%",
+                            backgroundColor: isCurrent
+                              ? "#22c55e"
+                              : "var(--text-muted)",
+                          }}
+                        />
+                        {server.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* TV Show Episodes Section */}
+          {type === "tv" && (
+            <div className="episode-section">
+              <div className="season-selector">
+                <label htmlFor="seasonSelect">Select Season</label>
+                <select
+                  id="seasonSelect"
+                  value={currentSeason}
+                  onChange={(e) => handleSeasonChange(Number(e.target.value))}
+                  className="season-dropdown"
+                >
+                  {seasons.map((season) => (
+                    <option
+                      key={season.season_number}
+                      value={season.season_number}
+                    >
+                      {season.name} ({season.episode_count} episodes)
                     </option>
                   ))}
                 </select>
               </div>
-            </div>
-          </div>
 
-          {/* Recommendations Sidebar */}
-          <div className="recommendations-sidebar">
-            <h3 className="section-title">Recommendations</h3>
-            <div className="recommendations-list">
-              {recommendations.length > 0 ? (
-                recommendations.map((rec) => (
-                  <div
-                    key={rec.id}
-                    className="recommendation-item"
-                    onClick={() => handleRecommendationClick(rec.media_type || type, rec.id)}
-                  >
+              <div className="episodes-grid">
+                <h4 className="episodes-title">Episodes</h4>
+                <div className="episodes-list">
+                  {episodes.map((episode) => {
+                    const isCurrentEp =
+                      currentEpisode === episode.episode_number;
+                    return (
+                      <button
+                        key={episode.episode_number}
+                        type="button"
+                        className={`episode-card ${isCurrentEp ? "active" : ""}`}
+                        onClick={() =>
+                          setCurrentEpisode(episode.episode_number)
+                        }
+                      >
+                        <div className="episode-number">
+                          E{episode.episode_number}
+                        </div>
+                        <div className="episode-content">
+                          <div className="episode-title">{episode.name}</div>
+                          <div className="episode-meta">
+                            {episode.runtime && (
+                              <span
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "3px",
+                                }}
+                              >
+                                <ClockIcon size={12} />
+                                {episode.runtime}m
+                              </span>
+                            )}
+                            {episode.air_date && (
+                              <span
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "3px",
+                                }}
+                              >
+                                <CalendarIcon size={12} />
+                                {new Date(episode.air_date).toLocaleDateString(
+                                  undefined,
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  },
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Visual Recommendations Sidebar */}
+        <aside className="recommendations-sidebar">
+          <h3 className="section-title">Recommended</h3>
+          <div className="recommendations-list">
+            {recommendations.length > 0 ? (
+              recommendations.map((rec) => (
+                <div
+                  key={rec.id}
+                  className="recommendation-item"
+                  onClick={() =>
+                    handleRecommendationClick(rec.media_type || type, rec.id)
+                  }
+                  role="button"
+                  tabIndex={0}
+                >
+                  {rec.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w92${rec.poster_path}`}
+                      alt={rec.title || rec.name}
+                      style={{
+                        width: "40px",
+                        height: "58px",
+                        objectFit: "cover",
+                        borderRadius: "var(--radius-sm)",
+                        flexShrink: 0,
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                      }}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "58px",
+                        background: "var(--bg-surface-elevated)",
+                        borderRadius: "var(--radius-sm)",
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="recommendation-title">
                       {rec.title || rec.name}
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="no-recommendations">
-                  <p>No recommendations available</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* TV Show Episodes Section */}
-        {type === 'tv' && (
-          <div className="episode-section">
-            <div className="season-selector">
-              <label className="selector-label">Season</label>
-              <select 
-                value={currentSeason} 
-                onChange={(e) => handleSeasonChange(Number(e.target.value))}
-                className="season-dropdown"
-              >
-                {seasons.map(season => (
-                  <option key={season.season_number} value={season.season_number}>
-                    {season.name} ({season.episode_count} episodes)
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="episodes-grid">
-              <h4 className="episodes-title">Episodes</h4>
-              <div className="episodes-list">
-                {episodes.map(episode => (
-                  <button
-                    key={episode.episode_number}
-                    className={`episode-card ${currentEpisode === episode.episode_number ? 'active' : ''}`}
-                    onClick={() => setCurrentEpisode(episode.episode_number)}
-                  >
-                    <div className="episode-number">
-                      E{episode.episode_number}
-                    </div>
-                    <div className="episode-content">
-                      <div className="episode-title">{episode.name}</div>
-                      <div className="episode-meta">
-                        {episode.runtime && (
-                          <span className="episode-runtime">{episode.runtime}m</span>
-                        )}
-                        {episode.air_date && (
-                          <span className="episode-date">
-                            {new Date(episode.air_date).toLocaleDateString()}
-                          </span>
-                        )}
+                    {rec.vote_average > 0 && (
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          fontSize: "0.76rem",
+                          color: "var(--accent-gold)",
+                          marginTop: "2px",
+                        }}
+                      >
+                        <StarIcon size={12} fill="currentColor" />
+                        {rec.vote_average.toFixed(1)}
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-recommendations">
+                <p>No similar titles found</p>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </aside>
       </div>
     </div>
   );

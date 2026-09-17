@@ -88,8 +88,6 @@ nyc_output/
 # Uncomment one if your team uses multiple package managers
 package-lock.json
 yarn.lock
-pnpm-lock.yaml
-
 # =========================================
 #  Core Project Ignored Files inside a directory
 # =========================================
@@ -180,4 +178,3 @@ pnpm-lock.yaml
 # Uncomment one if your team uses multiple package managers
 **/package-lock.json
 **/yarn.lock
-**/pnpm-lock.yaml

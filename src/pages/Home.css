@@ -1,164 +1,113 @@
+/* ==========================================================================
+   MSTREAM - HOME PAGE SPECIFIC STYLES
+   Segmented Trending Window Control & Side-by-Side Trending
+   ========================================================================== */
+
+/* Modern Segmented Capsule Toggle */
 .time-window-toggle-container {
-  display: flex !important;
-  justify-content: center !important;
-  margin: 20px 0 !important;
-  padding: 0 20px !important;
-  z-index: 100 !important;
-  position: relative !important;
+  display: flex;
+  justify-content: center;
+  margin: 28px 0 20px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
 }
 
 .time-window-toggle {
-  display: flex !important;
-  align-items: center !important;
-  gap: 15px !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  padding: 10px 20px !important;
-  border-radius: 30px !important;
-  backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  width: fit-content !important;
-  margin: 0 auto !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(18, 18, 28, 0.85);
+  border: 1px solid var(--border-default);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
+.toggle-segment-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.toggle-segment-btn:hover {
+  color: var(--text-primary);
+}
+
+.toggle-segment-btn.active {
+  background: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 12px var(--brand-glow);
+}
+
+/* Fallback support for legacy toggle switch markup */
 .toggle-label {
-  color: #fff !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  transition: color 0.3s ease !important;
-  opacity: 0.7 !important;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: color var(--transition-fast);
+  cursor: pointer;
 }
 
 .toggle-label.active {
-  opacity: 1 !important;
-  color: #e50914 !important;
+  color: #ffffff;
 }
 
 .toggle-switch {
-  position: relative !important;
-  width: 60px !important;
-  height: 30px !important;
-  background: #333 !important;
-  border-radius: 30px !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: background 0.3s ease !important;
-  outline: none !important;
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  outline: none;
+  margin: 0 8px;
 }
 
 .toggle-switch.day {
-  background: #e50914 !important;
+  background: var(--brand-primary);
 }
 
 .toggle-slider {
-  position: absolute !important;
-  top: 3px !important;
-  left: 3px !important;
-  width: 24px !important;
-  height: 24px !important;
-  background: white !important;
-  border-radius: 50% !important;
-  transition: transform 0.3s ease !important;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition-normal);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .toggle-switch.week .toggle-slider {
-  transform: translateX(0) !important;
+  transform: translateX(0);
 }
 
 .toggle-switch.day .toggle-slider {
-  transform: translateX(30px) !important;
+  transform: translateX(24px);
 }
 
-@media (max-width: 768px) {
-  .time-window-toggle {
-    padding: 8px 15px !important;
-    gap: 12px !important;
-  }
-
-  .toggle-label {
-    font-size: 12px !important;
-  }
-
-  .toggle-switch {
-    width: 50px !important;
-    height: 25px !important;
-  }
-
-  .toggle-slider {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
-  .toggle-switch.day .toggle-slider {
-    transform: translateX(25px) !important;
-  }
-}
-
-.time-window-toggle-container {
-  display: flex !important;
-  justify-content: center !important;
-  margin: 20px 0 !important;
-  padding: 0 20px !important;
-  z-index: 100 !important; 
-  position: relative !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.time-window-toggle {
-  display: flex !important;
-  align-items: center !important;
-  gap: 15px !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  padding: 10px 20px !important;
-  border-radius: 30px !important;
-  backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  width: fit-content !important;
-  margin: 0 auto !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-  z-index: 1001 !important;
-}
-
-/* Now Playing Overlay Styles */
-.now-playing-overlay {
-  margin-bottom: 15px;
-}
-
-.now-playing-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #e50914, #ff6b6b);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
-  }
-  50% {
-    box-shadow: 0 2px 16px rgba(229, 9, 20, 0.6);
-  }
-  100% {
-    box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
-  }
-}
-
-/* Home.css - Add these styles */
-
+/* Side-by-Side Trending Section */
 .trending-side-by-side {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 40px;
+  gap: 2.5rem;
+  margin-bottom: 48px;
 }
 
 .trending-column {
@@ -166,27 +115,65 @@
   flex-direction: column;
 }
 
-/* Ensure MovieRow components in side-by-side layout show 3 columns */
-.trending-column .movie-row .grid-container {
+.trending-column .movie-row .grid-container,
+.grid-container.cols-3 {
   grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-/* Responsive design */
+/* Responsive Rules */
 @media (max-width: 1024px) {
   .trending-side-by-side {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
+  }
+
+  .trending-column .movie-row .grid-container,
+  .grid-container.cols-3 {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .trending-column .movie-row .grid-container {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 640px) {
+  .time-window-toggle-container {
+    padding: 0 12px;
+    margin: 20px 0 16px;
+  }
+
+  .time-window-toggle {
+    width: 100%;
+    max-width: 340px;
+    justify-content: center;
+  }
+
+  .toggle-segment-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 12px;
+    font-size: 0.85rem;
+  }
+
+  .trending-side-by-side {
+    gap: 1.5rem;
+    margin-bottom: 32px;
+  }
+
+  .trending-column .movie-row .grid-container,
+  .grid-container.cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
   }
 }
 
 @media (max-width: 480px) {
-  .trending-column .movie-row .grid-container {
-    grid-template-columns: 1fr;
+  .trending-side-by-side {
+    gap: 1.25rem;
+    margin-bottom: 24px;
+  }
+
+  .trending-column .movie-row .grid-container,
+  .grid-container.cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
   }
 }

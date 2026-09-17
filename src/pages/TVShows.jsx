@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import MovieRow from '../components/MovieRow';
-import Modal from '../components/Modal';
-import { useTMDB } from '../hooks/useTMDB';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import MovieRow from "../components/MovieRow";
+import Modal from "../components/Modal";
+import { useTMDB } from "../hooks/useTMDB";
+import {
+  CloseIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "../components/Icons";
 
 const TVShows = () => {
   const [tvShows, setTvShows] = useState([]);
@@ -11,37 +16,33 @@ const TVShows = () => {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // TMDB API caps discover results at 500 pages max
   const totalPages = 300;
 
-  // Initialize filters from URL or defaults
   const [filters, setFilters] = useState({
-    sort_by: searchParams.get('sort_by') || 'popularity.desc',
-    include_adult: searchParams.get('include_adult') === 'true' || false,
-    include_null_first_air_dates: searchParams.get('include_null_first_air_dates') === 'true' || false,
-    language: searchParams.get('language') || 'en-US',
-    page: parseInt(searchParams.get('page')) || 1,
-    first_air_date_year: searchParams.get('first_air_date_year') ? parseInt(searchParams.get('first_air_date_year')) : undefined,
-    with_genres: searchParams.get('with_genres') || undefined,
-    with_status: searchParams.get('with_status') || undefined
+    sort_by: searchParams.get("sort_by") || "popularity.desc",
+    include_adult: searchParams.get("include_adult") === "true" || false,
+    include_null_first_air_dates:
+      searchParams.get("include_null_first_air_dates") === "true" || false,
+    language: searchParams.get("language") || "en-US",
+    page: parseInt(searchParams.get("page")) || 1,
+    first_air_date_year: searchParams.get("first_air_date_year")
+      ? parseInt(searchParams.get("first_air_date_year"))
+      : undefined,
+    with_genres: searchParams.get("with_genres") || undefined,
+    with_status: searchParams.get("with_status") || undefined,
   });
 
-  const {
-    tvGenres,
-    fetchDiscoverTV,
-    fetchCredits
-  } = useTMDB();
+  const { tvGenres, fetchDiscoverTV, fetchCredits } = useTMDB();
 
   useEffect(() => {
     fetchTVShows();
   }, [filters]);
 
-  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
-    
+
     Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
+      if (value !== undefined && value !== null && value !== "") {
         params.set(key, value.toString());
       }
     });
@@ -62,9 +63,10 @@ const TVShows = () => {
   };
 
   const handleItemClick = async (item) => {
-    const type = 'tv';
+    const type = "tv";
     const genreMap = tvGenres;
-    const genreNames = item.genre_ids?.map(id => genreMap.get(id)).filter(Boolean) || [];
+    const genreNames =
+      item.genre_ids?.map((id) => genreMap.get(id)).filter(Boolean) || [];
 
     const cast = await fetchCredits(type, item.id);
 
@@ -72,7 +74,7 @@ const TVShows = () => {
       ...item,
       type,
       genres: genreNames,
-      cast: cast.join(', ') || 'N/A'
+      cast: cast.join(", ") || "N/A",
     });
     setIsModalOpen(true);
   };
@@ -83,109 +85,122 @@ const TVShows = () => {
   };
 
   const handleFilterChange = (newFilters) => {
-    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
+    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
-  // Dedicated pagination handler that keeps current filtering variables intact
   const handlePageChange = (newPage) => {
-    setFilters(prev => ({ ...prev, page: newPage }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setFilters((prev) => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const clearFilters = () => {
     setFilters({
-      sort_by: 'popularity.desc',
+      sort_by: "popularity.desc",
       include_adult: false,
       include_null_first_air_dates: false,
-      language: 'en-US',
-      page: 1
+      language: "en-US",
+      page: 1,
     });
   };
 
   return (
     <div className="tv-shows-page">
       <div className="page-header">
-        <h1>TV Shows</h1>
-        <p>Discover the latest and greatest TV series</p>
-        <button 
-          className="clear-filters-btn"
-          onClick={clearFilters}
-          style={{
-            background: 'var(--netflix-red)',
-            color: 'white',
-            border: 'none',
-            padding: '8px 16px',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginTop: '10px'
-          }}
-        >
-          Clear Filters
-        </button>
+        <h1>TV Series</h1>
+        <p>
+          Binge-worthy shows, anime, and trending international drama series
+        </p>
+        <div className="clear-filters-container">
+          <button
+            type="button"
+            className="clear-filters-btn"
+            onClick={clearFilters}
+          >
+            <CloseIcon size={14} />
+            Clear All Filters
+          </button>
+        </div>
       </div>
 
       <div className="filters-section">
         <div className="filter-row">
           <div className="filter-group">
-            <label htmlFor="sort-by">Sort By:</label>
+            <label htmlFor="tvSortBySelect">Sort By</label>
             <select
-              id="sort-by"
+              id="tvSortBySelect"
               value={filters.sort_by}
               onChange={(e) => handleFilterChange({ sort_by: e.target.value })}
             >
-              <option value="popularity.asc">Popularity Ascending</option>
-              <option value="popularity.desc">Popularity Descending</option>
-              <option value="first_air_date.asc">First Air Date Ascending</option>
-              <option value="first_air_date.desc">First Air Date Descending</option>
-              <option value="vote_average.asc">Rating Ascending</option>
-              <option value="vote_average.desc">Rating Descending</option>
-              <option value="vote_count.asc">Vote Count Ascending</option>
-              <option value="vote_count.desc">Vote Count Descending</option>
+              <option value="popularity.desc">Popularity (High to Low)</option>
+              <option value="popularity.asc">Popularity (Low to High)</option>
+              <option value="vote_average.desc">Rating (Highest First)</option>
+              <option value="vote_average.asc">Rating (Lowest First)</option>
+              <option value="first_air_date.desc">
+                First Air Date (Newest)
+              </option>
+              <option value="first_air_date.asc">
+                First Air Date (Oldest)
+              </option>
             </select>
           </div>
 
           <div className="filter-group">
-            <label htmlFor="first-air-year">First Air Year:</label>
+            <label htmlFor="tvYearSelect">First Air Year</label>
             <select
-              id="first-air-year"
-              value={filters.first_air_date_year || ''}
-              onChange={(e) => handleFilterChange({
-                first_air_date_year: e.target.value ? parseInt(e.target.value) : undefined
-              })}
+              id="tvYearSelect"
+              value={filters.first_air_date_year || ""}
+              onChange={(e) =>
+                handleFilterChange({
+                  first_air_date_year: e.target.value
+                    ? parseInt(e.target.value)
+                    : undefined,
+                })
+              }
             >
               <option value="">All Years</option>
-              {Array.from({ length: new Date().getFullYear() - 1930 + 1 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                <option key={year} value={year}>{year}</option>
+              {Array.from(
+                { length: new Date().getFullYear() - 1930 + 1 },
+                (_, i) => new Date().getFullYear() - i,
+              ).map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="filter-group">
-            <label htmlFor="genre">Genre:</label>
+            <label htmlFor="tvGenreSelect">Genre</label>
             <select
-              id="genre"
-              value={filters.with_genres || ''}
-              onChange={(e) => handleFilterChange({
-                with_genres: e.target.value || undefined
-              })}
+              id="tvGenreSelect"
+              value={filters.with_genres || ""}
+              onChange={(e) =>
+                handleFilterChange({
+                  with_genres: e.target.value || undefined,
+                })
+              }
             >
               <option value="">All Genres</option>
               {Array.from(tvGenres.entries()).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
+                <option key={id} value={id}>
+                  {name}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="filter-group">
-            <label htmlFor="status">Status:</label>
+            <label htmlFor="tvStatusSelect">Show Status</label>
             <select
-              id="status"
-              value={filters.with_status || ''}
-              onChange={(e) => handleFilterChange({
-                with_status: e.target.value || undefined
-              })}
+              id="tvStatusSelect"
+              value={filters.with_status || ""}
+              onChange={(e) =>
+                handleFilterChange({
+                  with_status: e.target.value || undefined,
+                })
+              }
             >
-              <option value="">All Status</option>
+              <option value="">All Statuses</option>
               <option value="0">Returning Series</option>
               <option value="1">Planned</option>
               <option value="2">In Production</option>
@@ -197,61 +212,44 @@ const TVShows = () => {
         </div>
       </div>
 
-      {/* Inline Loading Logic preserves layout shell during API requests */}
       {loading ? (
-        <div className="loading-screen" style={{ minHeight: '300px' }}>
+        <div className="loading-screen" style={{ minHeight: "350px" }}>
           <div className="loading-spinner"></div>
-          <p>Loading TV shows...</p>
+          <p>Loading TV series...</p>
         </div>
       ) : (
         <>
           <div className="content-rows">
             <MovieRow
-              title={`TV Shows (Page ${filters.page})`}
+              title={`TV Series (Page ${filters.page})`}
               items={tvShows}
               onItemClick={handleItemClick}
             />
           </div>
 
-          {/* Pagination Component */}
-          <div className="pagination" style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '15px',
-            margin: '40px 0',
-            color: 'white'
-          }}>
+          <div className="pagination">
             <button
+              type="button"
               disabled={filters.page === 1}
               onClick={() => handlePageChange(filters.page - 1)}
-              style={{
-                padding: '8px 16px',
-                background: filters.page === 1 ? '#333' : 'var(--netflix-red, #e50914)',
-                color: filters.page === 1 ? '#aaa' : 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: filters.page === 1 ? 'not-allowed' : 'pointer'
-              }}
+              aria-label="Previous page"
             >
+              <ChevronLeftIcon size={16} />
               Previous
             </button>
-            
-            <span>Page <strong>{filters.page}</strong> of {totalPages}</span>
-            
+
+            <span>
+              Page <strong>{filters.page}</strong> of {totalPages}
+            </span>
+
             <button
+              type="button"
               disabled={filters.page === totalPages}
               onClick={() => handlePageChange(filters.page + 1)}
-              style={{
-                padding: '8px 16px',
-                background: filters.page === totalPages ? '#333' : 'var(--netflix-red, #e50914)',
-                color: filters.page === totalPages ? '#aaa' : 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: filters.page === totalPages ? 'not-allowed' : 'pointer'
-              }}
+              aria-label="Next page"
             >
               Next
+              <ChevronRightIcon size={16} />
             </button>
           </div>
         </>
