@@ -5,7 +5,7 @@
 
   # MSTREAM
 
-  <p><strong>A Modern, Fast, and Ad-Free Cinema Streaming Experience</strong></p>
+  <p><strong>A Modern, Fast, and Fluid Cinema Streaming Experience</strong></p>
 
   <p>
     <a href="https://github.com/cd-Crypton/mstream/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-red.svg" alt="License MIT" /></a>
@@ -23,6 +23,7 @@
     <a href="#-system-architecture">Architecture</a> •
     <a href="#-getting-started">Getting Started</a> •
     <a href="#-deployment">Deployment</a> •
+    <a href="#-running-an-ad-free-self-hosted-instance">Ad-Free Setup</a> •
     <a href="#-documentation">Documentation</a>
   </p>
 </div>
@@ -34,6 +35,9 @@
 **MSTREAM** is an open-source, cinema-grade movie and TV show streaming web application powered by **The Movie Database (TMDB) API** and modern React 19. Designed with an ultra-clean **OLED Cinema Dark** aesthetic, MSTREAM delivers instantaneous catalog browsing, zero-lag page transitions, multi-provider playback options, and an account-free persistent library that stays in sync across your browser tabs.
 
 Built specifically for high-speed delivery, it deploys seamlessly to **Cloudflare Pages** with an edge caching proxy and full Progressive Web App (PWA) offline precaching.
+
+> [!NOTE]
+> **Ad Disclosure & Self-Hosting**: The official hosted demo at [`https://mstream.eu.cc`](https://mstream.eu.cc) includes an ad-network popunder script in `index.html` to help offset domain and hosting infrastructure costs. If you are self-hosting or deploying your own instance, **you can make MSTREAM completely ad-free** simply by deleting this script from `index.html` (see [Running an Ad-Free Self-Hosted Instance](#-running-an-ad-free-self-hosted-instance)). Please note that external, third-party video iframe embeds may still serve their own player ads, so an ad-blocking browser (like Brave) or extension (such as uBlock Origin) is strongly recommended for video streaming.
 
 ---
 
@@ -215,6 +219,65 @@ pnpm wrangler login
 # Build and deploy
 pnpm run deploy
 ```
+
+### 🚫 Running an Ad-Free Self-Hosted Instance
+
+The public hosted demo instance includes an ad script in `index.html` to help support server and domain expenses. If you are deploying or self-hosting MSTREAM yourself, you can run a **completely clean, ad-free application** by simply removing the following script block from [`index.html`](index.html) (lines ~263–311):
+
+```html
+    <script type="text/javascript" data-cfasync="false">
+      /*<![CDATA[/* */
+      (function () {
+        var g = window,
+          h = "e94f3803a2dc20c3edf2e73823934889",
+          f = [
+            ["siteId", 824 - 860 * 253 - 930 - 6 + 5502765],
+            ["minBid", 0],
+            ["popundersPerIP", "0"],
+            ["delayBetween", 0],
+            ["default", false],
+            ["defaultPerDay", 0],
+            ["topmostLayer", "auto"],
+          ],
+          l = [
+            "d3d3LmludGVsbGlwb3B1cC5jb20vYk9yZ0NoYXJ0Lm1pbi5jc3M=",
+            "ZDNtcjd5MTU0ZDJxZzUuY2xvdWRmcm9udC5uZXQvd3V4a1ZBL3dqcy5jb29raWUubWluLmpz",
+          ],
+          i = -1,
+          z,
+          e,
+          r = function () {
+            clearTimeout(e);
+            i++;
+            if (l[i] && !(1815583359000 < new Date().getTime() && 1 < i)) {
+              z = g.document.createElement("script");
+              z.type = "text/javascript";
+              z.async = !0;
+              var d = g.document.getElementsByTagName("script")[0];
+              z.src = "https://" + atob(l[i]);
+              z.crossOrigin = "anonymous";
+              z.onerror = r;
+              z.onload = function () {
+                clearTimeout(e);
+                g[h.slice(0, 16) + h.slice(0, 16)] || r();
+              };
+              e = setTimeout(r, 5e3);
+              d.parentNode.insertBefore(z, d);
+            }
+          };
+        if (!g[h]) {
+          try {
+            Object.freeze((g[h] = f));
+          } catch (e) {}
+          r();
+        }
+      })();
+      /*]]>/* */
+    </script>
+```
+
+> [!TIP]
+> Deleting this block removes all website popunder and display ads. However, third-party video iframe embeds (hosted by separate external streaming providers) may still inject their own player ads. For the cleanest viewing experience, we recommend pairing your browser with [Brave Browser](https://brave.com/) or the [uBlock Origin](https://ublockorigin.com/) extension.
 
 ---
 

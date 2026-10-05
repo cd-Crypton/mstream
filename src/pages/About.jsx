@@ -5,6 +5,8 @@ import {
   TvIcon,
   SparkleIcon,
   GitHubIcon,
+  BookOpenIcon,
+  ExternalLinkIcon,
 } from "../components/Icons";
 
 const About = () => {
@@ -80,6 +82,84 @@ const About = () => {
                   Curated dark-mode aesthetic with ambient lighting and high
                   contrast
                 </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Featured Entertainment Partner / SEO Backlink: PanelRift */}
+          <section className="about-section about-partner-section">
+            <div className="partner-header-tag">
+              <SparkleIcon size={16} />
+              <span>Recommended Reading Partner</span>
+            </div>
+            <h2>Discover Original Webtoons &amp; Comics on PanelRift</h2>
+            <p>
+              Anime series and Asian cinema adaptations often originate from legendary webtoons, manhwa, and manga stories. If you enjoy the storylines streaming on MStream, explore the original serialized releases on our featured reading partner platform:{" "}
+              <a
+                href="https://panelrift.eu.cc/"
+                target="_blank"
+                rel="noopener"
+                className="about-inline-partner-link"
+                title="Read Free Manhwa and Manga Online on PanelRift"
+              >
+                <strong>PanelRift (Free Manhwa &amp; Webtoons Reader)</strong>
+              </a>
+              .
+            </p>
+
+            <div className="partner-spotlight-card">
+              <div className="partner-spotlight-header">
+                <div className="partner-spotlight-icon">
+                  <BookOpenIcon size={28} />
+                </div>
+                <div>
+                  <span className="partner-badge-pill">Sister Platform</span>
+                  <h3 className="partner-spotlight-title">
+                    PanelRift &mdash; Read Free Manhwa &amp; Manga Online
+                  </h3>
+                </div>
+              </div>
+
+              <p className="partner-spotlight-desc">
+                PanelRift is dedicated to webtoon lovers, hosting an extensive catalog of Korean manhwa, Japanese manga, and Chinese manhua across fantasy, action, reincarnation (isekai), romance, and martial arts (murim) genres.
+              </p>
+
+              <div className="partner-perks-grid">
+                <div className="partner-perk-item">
+                  <span className="perk-bullet">⚡</span>
+                  <div>
+                    <strong>Daily Chapter Drops</strong>
+                    <p>Read trending manhwa chapters the moment they are translated and scanned.</p>
+                  </div>
+                </div>
+                <div className="partner-perk-item">
+                  <span className="perk-bullet">📱</span>
+                  <div>
+                    <strong>Mobile-Optimized Reader</strong>
+                    <p>Seamless vertical continuous scroll designed for iPhone, Android, and tablets.</p>
+                  </div>
+                </div>
+                <div className="partner-perk-item">
+                  <span className="perk-bullet">🎨</span>
+                  <div>
+                    <strong>High-Definition Art</strong>
+                    <p>Pristine uncompressed color images bringing illustrations to life.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="partner-action-box">
+                <a
+                  href="https://panelrift.eu.cc/"
+                  target="_blank"
+                  rel="noopener"
+                  className="partner-cta-button"
+                  title="Read Free Manhwa, Manga, and Webtoons Online at PanelRift"
+                >
+                  <span>Start Reading on PanelRift</span>
+                  <ExternalLinkIcon size={18} />
+                </a>
+                <span className="partner-cta-note">100% Free • No Mandatory Registration</span>
               </div>
             </div>
           </section>
