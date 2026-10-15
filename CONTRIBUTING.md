@@ -93,6 +93,9 @@ pnpm run format:fix
 
 # Verify production build passes cleanly
 pnpm run build
+
+# If modifying Docker deployment or Nginx configuration:
+pnpm run docker:build
 ```
 
 ---
@@ -105,6 +108,7 @@ When submitting a Pull Request, please ensure:
 - [ ] Code follows project standards and clean architecture.
 - [ ] `pnpm run lint` passes with 0 errors.
 - [ ] `pnpm run build` generates `/dist` without build errors.
+- [ ] If modifying Docker or deployment files, verified container builds cleanly (`pnpm run docker:build`).
 - [ ] Responsive design verified on mobile viewports (`<= 640px` and `<= 480px`).
 - [ ] Commit messages follow the Conventional Commits format.
 - [ ] PR description clearly explains what changed and why.

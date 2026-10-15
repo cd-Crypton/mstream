@@ -190,6 +190,10 @@ All scripts must be executed using **pnpm**:
 | `pnpm run lint` | Runs ESLint to verify code quality and style. |
 | `pnpm run format:check` | Checks source code formatting with Prettier. |
 | `pnpm run format:fix` | Automatically formats all JS, JSX, and CSS files with Prettier. |
+| `pnpm run docker:build` | Builds the multi-stage production Docker image (`mstream:latest`). |
+| `pnpm run docker:up` | Starts MStream and Cloudflare Tunnel containers in the background. |
+| `pnpm run docker:down` | Stops and removes running Docker containers. |
+| `pnpm run docker:logs` | Streams live logs from all Docker containers. |
 
 ---
 
@@ -309,10 +313,13 @@ The public hosted demo instance includes an ad script in `index.html` to help su
 mstream/
 ├── .agents/                 # AI Assistant skills & agent toolkits
 ├── docs/                    # Architectural & in-depth technical documentation
-│   └── ARCHITECTURE.md      # Tiered cache, rate limiting, and session design
+│   ├── ARCHITECTURE.md      # Tiered cache, rate limiting, and session design
+│   └── DOCKER.md            # Self-hosting, reverse proxy & Cloudflare Tunnel guide
 ├── functions/
 │   └── api/
 │       └── [[path]].js      # Cloudflare Pages edge proxy with Cache API
+├── nginx/
+│   └── default.conf.template# Production Nginx reverse-proxy & SPA routing template
 ├── public/                  # Static assets, web manifest, and logos
 ├── src/
 │   ├── assets/              # Branding images and icons
@@ -345,6 +352,10 @@ mstream/
 │   │   └── pages.css        # Page layout styles
 │   ├── App.jsx              # Main routing & provider composition
 │   └── main.jsx             # React DOM entry point & PWA registration
+├── .dockerignore            # Build context exclusions
+├── Dockerfile               # Multi-stage production container build
+├── docker-compose.yml       # Stack definition (MStream + Cloudflare Tunnel)
+├── docker-entrypoint.sh     # Safe Nginx runtime configuration substitution
 ├── index.html               # HTML entry with metadata & SEO tags
 ├── package.json             # Scripts & dependencies
 ├── vite.config.js           # Vite configuration with PWA plugin
@@ -355,7 +366,8 @@ mstream/
 
 ## 📚 Additional Documentation
 
-- [System Architecture & Caching Deep Dive](docs/ARCHITECTURE.md): Comprehensive breakdown of the caching tiers, token-bucket rate limiter, cross-tab synchronization, and edge worker implementation.
+- [System Architecture & Caching Deep Dive](docs/ARCHITECTURE.md): Comprehensive breakdown of the caching tiers, token-bucket rate limiter, cross-tab synchronization, edge worker, and Docker runtime.
+- [Docker Self-Hosting & Cloudflare Tunnel Guide](docs/DOCKER.md): End-to-end instructions for running MStream via Docker Compose, Caddy, Nginx Proxy Manager, or zero-port Cloudflare Tunnel.
 - [Contributing Guide](CONTRIBUTING.md): Standards for PRs, conventional commits, and code formatting.
 
 ---
