@@ -178,3 +178,13 @@ yarn.lock
 # Uncomment one if your team uses multiple package managers
 **/package-lock.json
 **/yarn.lock
+
+# Agentic Skills
+.agent/
+.agents/
+.gemini/
+.claude/
+.codex/
+
+# Context
+context/

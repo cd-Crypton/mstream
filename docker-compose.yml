@@ -1,0 +1,29 @@
+services:
+  mstream:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mstream
+    image: mstream:latest
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8080}:80"
+    environment:
+      # TMDB Read Access Token (can be defined in .env or system environment)
+      - TMDB_READ_ACCESS_TOKEN=${TMDB_READ_ACCESS_TOKEN:-${VITE_TMDB_READ_ACCESS_TOKEN:-}}
+      - PORT=80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    depends_on:
+      - mstream
+

@@ -13,6 +13,7 @@
     <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-7.1.2-646CFF.svg?logo=vite&logoColor=white" alt="Vite" /></a>
     <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-fast-F69220.svg?logo=pnpm&logoColor=white" alt="pnpm" /></a>
     <a href="https://pages.cloudflare.com/"><img src="https://img.shields.io/badge/Cloudflare_Pages-Ready-F38020.svg?logo=cloudflare&logoColor=white" alt="Cloudflare Pages" /></a>
+    <a href="#option-3-self-hosting-with-docker--docker-compose"><img src="https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white" alt="Docker Ready" /></a>
     <a href="https://web.dev/progressive-web-apps/"><img src="https://img.shields.io/badge/PWA-Enabled-5A0FC8.svg?logo=pwa&logoColor=white" alt="PWA Ready" /></a>
   </p>
 
@@ -23,6 +24,7 @@
     <a href="#-system-architecture">Architecture</a> •
     <a href="#-getting-started">Getting Started</a> •
     <a href="#-deployment">Deployment</a> •
+    <a href="#option-3-self-hosting-with-docker--docker-compose">Docker</a> •
     <a href="#-running-an-ad-free-self-hosted-instance">Ad-Free Setup</a> •
     <a href="#-documentation">Documentation</a>
   </p>
@@ -219,6 +221,26 @@ pnpm wrangler login
 # Build and deploy
 pnpm run deploy
 ```
+
+### Option 3: Self-Hosting with Docker & Docker Compose
+
+MSTREAM can run anywhere with Docker (Linux VPS, macOS, Windows WSL2) via our optimized multi-stage container:
+
+```bash
+# 1. Clone the repo and enter directory
+git clone https://github.com/cd-Crypton/mstream.git
+cd mstream
+
+# 2. Copy and configure environment with your TMDB Read Access Token
+cp .env.example .env
+
+# 3. Start the container in background
+docker compose up -d
+```
+
+Open `http://localhost:8080` to access your self-hosted instance.
+
+👉 See the complete [Docker Self-Hosting Guide](docs/DOCKER.md) for reverse proxy examples (Caddy, Nginx Proxy Manager, Cloudflare Tunnel), SSL configuration, and environment reference.
 
 ### 🚫 Running an Ad-Free Self-Hosted Instance
 
