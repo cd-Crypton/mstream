@@ -175,3 +175,43 @@ Configured via `vite-plugin-pwa` in `vite.config.js`:
 - **Strategy**: `generateSW` with Workbox runtime.
 - **Precaching**: 41+ assets (HTML, CSS, JS, SVG, WebManifest, logos) are precached into the Cache Storage API on initial load.
 - **Offline Shell**: The application shell boots offline, displaying cached catalog titles or an informative connection status indicator.
+
+---
+
+## 🐳 Self-Hosted Container Architecture (Docker + Nginx + Cloudflare Tunnel)
+
+For self-hosters and VPS deployments, MSTREAM provides a containerized runtime alternative to Cloudflare Pages:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          Docker Compose Network                             │
+│                                                                             │
+│  ┌─────────────────────────────────┐   Internal DNS  ┌───────────────────┐  │
+│  │           cloudflared           ├──(http://mstream:80)──►│   mstream (Nginx) │  │
+│  │ (Cloudflare Tunnel Connector)   │                 │ (Port 80)         │  │
+│  └────────────────┬────────────────┘                 └─────────┬─────────┘  │
+└───────────────────┼────────────────────────────────────────────┼────────────┘
+                    │                                            │
+        Outbound Encrypted QUIC/HTTP2                            │
+                    │                                            │
+                    ▼                                            ▼
+     ┌─────────────────────────────┐                 ┌─────────────────────────┐
+     │   Cloudflare Edge Network   │                 │ Upstream TMDB API Proxy │
+     │  (Zero Inbound Ports Open)  │                 │ (Authorization: Bearer) │
+     └─────────────────────────────┘                 └─────────────────────────┘
+```
+
+1. **Multi-Stage Containerization (`Dockerfile`)**:
+   - **Builder Stage** (`node:20-alpine`): Installs dependencies with `pnpm --frozen-lockfile` and compiles production assets via Vite.
+   - **Runner Stage** (`nginx:alpine` ~30MB): Serves static HTML/JS/CSS assets with gzip compression and long-term immutable caching.
+2. **Dynamic Configuration (`docker-entrypoint.sh`)**:
+   - At container startup, `envsubst '$PORT $TMDB_TOKEN'` injects runtime parameters into `nginx/default.conf.template`.
+   - Explicit variable scoping prevents overwriting Nginx built-in routing variables (`$uri`, `$host`, `$remote_addr`).
+3. **Server-Side API Reverse Proxy (`/api/*`)**:
+   - In containerized mode, Nginx proxies requests matching `/api/(.*)` directly to `https://api.themoviedb.org/3/$1`.
+   - Injects the server-side `Authorization: Bearer` header, preventing TMDB credentials from ever leaking to the client browser.
+4. **Cloudflare Tunnel (`cloudflared`) Sidecar**:
+   - Runs alongside MStream on a private Docker bridge network.
+   - Initiates an outbound-only tunnel to Cloudflare Edge (UDP/TCP 7844).
+   - Ingress routes traffic to `http://mstream:80` without requiring any inbound open ports on the host firewall (`ufw default deny incoming`).
+

@@ -13,6 +13,7 @@
     <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-7.1.2-646CFF.svg?logo=vite&logoColor=white" alt="Vite" /></a>
     <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-fast-F69220.svg?logo=pnpm&logoColor=white" alt="pnpm" /></a>
     <a href="https://pages.cloudflare.com/"><img src="https://img.shields.io/badge/Cloudflare_Pages-Ready-F38020.svg?logo=cloudflare&logoColor=white" alt="Cloudflare Pages" /></a>
+    <a href="#option-3-self-hosting-with-docker--docker-compose"><img src="https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white" alt="Docker Ready" /></a>
     <a href="https://web.dev/progressive-web-apps/"><img src="https://img.shields.io/badge/PWA-Enabled-5A0FC8.svg?logo=pwa&logoColor=white" alt="PWA Ready" /></a>
   </p>
 
@@ -23,6 +24,7 @@
     <a href="#-system-architecture">Architecture</a> •
     <a href="#-getting-started">Getting Started</a> •
     <a href="#-deployment">Deployment</a> •
+    <a href="#option-3-self-hosting-with-docker--docker-compose">Docker</a> •
     <a href="#-running-an-ad-free-self-hosted-instance">Ad-Free Setup</a> •
     <a href="#-documentation">Documentation</a>
   </p>
@@ -188,6 +190,10 @@ All scripts must be executed using **pnpm**:
 | `pnpm run lint` | Runs ESLint to verify code quality and style. |
 | `pnpm run format:check` | Checks source code formatting with Prettier. |
 | `pnpm run format:fix` | Automatically formats all JS, JSX, and CSS files with Prettier. |
+| `pnpm run docker:build` | Builds the multi-stage production Docker image (`mstream:latest`). |
+| `pnpm run docker:up` | Starts MStream and Cloudflare Tunnel containers in the background. |
+| `pnpm run docker:down` | Stops and removes running Docker containers. |
+| `pnpm run docker:logs` | Streams live logs from all Docker containers. |
 
 ---
 
@@ -219,6 +225,26 @@ pnpm wrangler login
 # Build and deploy
 pnpm run deploy
 ```
+
+### Option 3: Self-Hosting with Docker & Docker Compose
+
+MSTREAM can run anywhere with Docker (Linux VPS, macOS, Windows WSL2) via our optimized multi-stage container:
+
+```bash
+# 1. Clone the repo and enter directory
+git clone https://github.com/cd-Crypton/mstream.git
+cd mstream
+
+# 2. Copy and configure environment with your TMDB Read Access Token
+cp .env.example .env
+
+# 3. Start the container in background
+docker compose up -d
+```
+
+Open `http://localhost:8080` to access your self-hosted instance.
+
+👉 See the complete [Docker Self-Hosting Guide](docs/DOCKER.md) for reverse proxy examples (Caddy, Nginx Proxy Manager, Cloudflare Tunnel), SSL configuration, and environment reference.
 
 ### 🚫 Running an Ad-Free Self-Hosted Instance
 
@@ -287,10 +313,13 @@ The public hosted demo instance includes an ad script in `index.html` to help su
 mstream/
 ├── .agents/                 # AI Assistant skills & agent toolkits
 ├── docs/                    # Architectural & in-depth technical documentation
-│   └── ARCHITECTURE.md      # Tiered cache, rate limiting, and session design
+│   ├── ARCHITECTURE.md      # Tiered cache, rate limiting, and session design
+│   └── DOCKER.md            # Self-hosting, reverse proxy & Cloudflare Tunnel guide
 ├── functions/
 │   └── api/
 │       └── [[path]].js      # Cloudflare Pages edge proxy with Cache API
+├── nginx/
+│   └── default.conf.template# Production Nginx reverse-proxy & SPA routing template
 ├── public/                  # Static assets, web manifest, and logos
 ├── src/
 │   ├── assets/              # Branding images and icons
@@ -323,6 +352,10 @@ mstream/
 │   │   └── pages.css        # Page layout styles
 │   ├── App.jsx              # Main routing & provider composition
 │   └── main.jsx             # React DOM entry point & PWA registration
+├── .dockerignore            # Build context exclusions
+├── Dockerfile               # Multi-stage production container build
+├── docker-compose.yml       # Stack definition (MStream + Cloudflare Tunnel)
+├── docker-entrypoint.sh     # Safe Nginx runtime configuration substitution
 ├── index.html               # HTML entry with metadata & SEO tags
 ├── package.json             # Scripts & dependencies
 ├── vite.config.js           # Vite configuration with PWA plugin
@@ -333,7 +366,8 @@ mstream/
 
 ## 📚 Additional Documentation
 
-- [System Architecture & Caching Deep Dive](docs/ARCHITECTURE.md): Comprehensive breakdown of the caching tiers, token-bucket rate limiter, cross-tab synchronization, and edge worker implementation.
+- [System Architecture & Caching Deep Dive](docs/ARCHITECTURE.md): Comprehensive breakdown of the caching tiers, token-bucket rate limiter, cross-tab synchronization, edge worker, and Docker runtime.
+- [Docker Self-Hosting & Cloudflare Tunnel Guide](docs/DOCKER.md): End-to-end instructions for running MStream via Docker Compose, Caddy, Nginx Proxy Manager, or zero-port Cloudflare Tunnel.
 - [Contributing Guide](CONTRIBUTING.md): Standards for PRs, conventional commits, and code formatting.
 
 ---

@@ -1,0 +1,78 @@
+server {
+    listen ${PORT};
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Gzip Compression for maximum delivery performance
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/javascript
+        application/json
+        application/xml
+        application/manifest+json
+        image/svg+xml;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # PWA Service Worker & Web Manifest (do not cache to allow immediate app updates)
+    location ~* (sw\.js|registerSW\.js|manifest\.webmanifest)$ {
+        expires -1;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    }
+
+    # Static Assets (JS, CSS, images, fonts) with immutable cache
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|webp|svg|woff2?|eot|ttf|otf)$ {
+        expires 6M;
+        access_log off;
+        add_header Cache-Control "public, max-age=15552000, immutable";
+        try_files $uri =404;
+    }
+
+    # Secure TMDB API Reverse Proxy
+    location /api/ {
+        # DNS resolvers: Docker internal resolver (127.0.0.11), Cloudflare (1.1.1.1), Google (8.8.8.8)
+        resolver 127.0.0.11 1.1.1.1 8.8.8.8 valid=300s ipv6=off;
+
+        # Forward request to TMDB API v3 stripping the /api/ prefix
+        proxy_pass https://api.themoviedb.org/3/;
+        proxy_ssl_server_name on;
+        proxy_ssl_protocols TLSv1.2 TLSv1.3;
+
+        # Inject upstream Authorization headers safely on the server side
+        proxy_set_header Accept "application/json";
+        proxy_set_header Authorization "Bearer ${TMDB_TOKEN}";
+        proxy_set_header Host api.themoviedb.org;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Connection Timeouts
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+    }
+
+    # SPA Client-Side Routing Fallback (HTML5 History API)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Error handling
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
