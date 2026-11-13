@@ -23,6 +23,7 @@ const Watch = () => {
   const { isInLibrary, toggleLibrary } = useLibrary();
 
   const [currentServer, setCurrentServer] = useState(0);
+  const [isSandboxEnabled, setIsSandboxEnabled] = useState(true);
   const [currentSeason, setCurrentSeason] = useState(1);
   const [currentEpisode, setCurrentEpisode] = useState(1);
   const [seasons, setSeasons] = useState([]);
@@ -36,35 +37,58 @@ const Watch = () => {
   const servers = [
     {
       name: "Server 1",
+      defaultSandbox: true,
       getUrl: (s, e) =>
         `https://api.cinezo.net/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 2",
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://z.zxcstream.xyz/player/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://vidzen.fun/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 3",
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://vaplayer.ru/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://player.vidzee.wtf/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 4",
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://vidplays.fun/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://zoryva.me/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 5",
+      defaultSandbox: false,
       getUrl: (s, e) =>
-        `https://vidzen.fun/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://vixsrc.to/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 6",
+      defaultSandbox: false,
       getUrl: (s, e) =>
-        `https://cinesrc.net/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://vidcore.io/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
+    {
+      name: "Server 7",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://vidnest.fun/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
+    {
+      name: "Server 8",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://www.vidy.st/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
   ];
+
+  const handleServerChange = (index) => {
+    setCurrentServer(index);
+    setIsSandboxEnabled(servers[index]?.defaultSandbox ?? true);
+  };
 
   useEffect(() => {
     if (type && id) {
@@ -264,8 +288,12 @@ const Watch = () => {
                 className="video-player"
                 allowFullScreen
                 title="Video Player"
-                key={`${currentServer}-${currentSeason}-${currentEpisode}`}
-                sandbox="allow-scripts allow-same-origin allow-presentation"
+                key={`${currentServer}-${currentSeason}-${currentEpisode}-${isSandboxEnabled}`}
+                sandbox={
+                  isSandboxEnabled
+                    ? "allow-scripts allow-same-origin allow-presentation"
+                    : undefined
+                }
               />
             </div>
 
@@ -287,7 +315,45 @@ const Watch = () => {
               </div>
 
               <div className="server-dropdown-section">
-                <h3 className="section-title">Select Server</h3>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <h3 className="section-title" style={{ margin: 0 }}>
+                    Select Server
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsSandboxEnabled((prev) => !prev)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "4px 9px",
+                      borderRadius: "var(--radius-sm, 6px)",
+                      fontSize: "0.76rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      border: isSandboxEnabled
+                        ? "1px solid rgba(34, 197, 94, 0.4)"
+                        : "1px solid rgba(239, 68, 68, 0.4)",
+                      background: isSandboxEnabled
+                        ? "rgba(34, 197, 94, 0.12)"
+                        : "rgba(239, 68, 68, 0.12)",
+                      color: isSandboxEnabled ? "#4ade80" : "#f87171",
+                      transition: "all var(--transition-fast, 0.2s ease)",
+                    }}
+                    title="Sandbox blocks popups and redirects. Some servers require sandbox to be disabled to play."
+                  >
+                    <span>
+                      {isSandboxEnabled ? "🛡️ Sandbox: ON" : "⚠️ Sandbox: OFF"}
+                    </span>
+                  </button>
+                </div>
                 <div
                   style={{
                     display: "grid",
@@ -301,7 +367,7 @@ const Watch = () => {
                       <button
                         key={server.name}
                         type="button"
-                        onClick={() => setCurrentServer(index)}
+                        onClick={() => handleServerChange(index)}
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -336,6 +402,18 @@ const Watch = () => {
                           }}
                         />
                         {server.name}
+                        {server.defaultSandbox ? (
+                          <span
+                            style={{
+                              fontSize: "0.7rem",
+                              opacity: 0.7,
+                              marginLeft: "2px",
+                            }}
+                            title="Sandbox Protected"
+                          >
+                            🛡️
+                          </span>
+                        ) : null}
                       </button>
                     );
                   })}
