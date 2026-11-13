@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://mstream.eu.cc/">
+  <a href="https://mstream.site/">
     <img alt="MSTREAM Logo" src="https://raw.githubusercontent.com/cd-Crypton/mstream/refs/heads/main/public/logo/mstream-new.png" width="220" />
   </a>
 
@@ -18,7 +18,7 @@
   </p>
 
   <p>
-    <a href="https://mstream.eu.cc/"><strong>Explore Live Demo »</strong></a>
+    <a href="https://mstream.site/"><strong>Explore Live Demo »</strong></a>
     <br />
     <a href="#-key-features">Key Features</a> •
     <a href="#-system-architecture">Architecture</a> •
@@ -39,7 +39,7 @@
 Built specifically for high-speed delivery, it deploys seamlessly to **Cloudflare Pages** with an edge caching proxy and full Progressive Web App (PWA) offline precaching.
 
 > [!NOTE]
-> **Ad Disclosure & Self-Hosting**: The official hosted demo at [`https://mstream.eu.cc`](https://mstream.eu.cc) includes an ad-network popunder script in `index.html` to help offset domain and hosting infrastructure costs. If you are self-hosting or deploying your own instance, **you can make MSTREAM completely ad-free** simply by deleting this script from `index.html` (see [Running an Ad-Free Self-Hosted Instance](#-running-an-ad-free-self-hosted-instance)). Please note that external, third-party video iframe embeds may still serve their own player ads, so an ad-blocking browser (like Brave) or extension (such as uBlock Origin) is strongly recommended for video streaming.
+> **Ad Disclosure & Self-Hosting**: The official hosted demo at [`https://mstream.site`](https://mstream.site) includes an ad-network popunder script in `index.html` to help offset domain and hosting infrastructure costs. If you are self-hosting or deploying your own instance, **you can make MSTREAM completely ad-free** simply by deleting this script from `index.html` (see [Running an Ad-Free Self-Hosted Instance](#-running-an-ad-free-self-hosted-instance)). Please note that external, third-party video iframe embeds may still serve their own player ads, so an ad-blocking browser (like Brave) or extension (such as uBlock Origin) is strongly recommended for video streaming.
 
 ---
 
