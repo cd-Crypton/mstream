@@ -94,7 +94,10 @@ const About = () => {
             </div>
             <h2>Discover Original Webtoons &amp; Comics on PanelRift</h2>
             <p>
-              Anime series and Asian cinema adaptations often originate from legendary webtoons, manhwa, and manga stories. If you enjoy the storylines streaming on MStream, explore the original serialized releases on our featured reading partner platform:{" "}
+              Anime series and Asian cinema adaptations often originate from
+              legendary webtoons, manhwa, and manga stories. If you enjoy the
+              storylines streaming on MStream, explore the original serialized
+              releases on our featured reading partner platform:{" "}
               <a
                 href="https://panelrift.eu.cc/"
                 target="_blank"
@@ -121,7 +124,10 @@ const About = () => {
               </div>
 
               <p className="partner-spotlight-desc">
-                PanelRift is dedicated to webtoon lovers, hosting an extensive catalog of Korean manhwa, Japanese manga, and Chinese manhua across fantasy, action, reincarnation (isekai), romance, and martial arts (murim) genres.
+                PanelRift is dedicated to webtoon lovers, hosting an extensive
+                catalog of Korean manhwa, Japanese manga, and Chinese manhua
+                across fantasy, action, reincarnation (isekai), romance, and
+                martial arts (murim) genres.
               </p>
 
               <div className="partner-perks-grid">
@@ -129,21 +135,30 @@ const About = () => {
                   <span className="perk-bullet">⚡</span>
                   <div>
                     <strong>Daily Chapter Drops</strong>
-                    <p>Read trending manhwa chapters the moment they are translated and scanned.</p>
+                    <p>
+                      Read trending manhwa chapters the moment they are
+                      translated and scanned.
+                    </p>
                   </div>
                 </div>
                 <div className="partner-perk-item">
                   <span className="perk-bullet">📱</span>
                   <div>
                     <strong>Mobile-Optimized Reader</strong>
-                    <p>Seamless vertical continuous scroll designed for iPhone, Android, and tablets.</p>
+                    <p>
+                      Seamless vertical continuous scroll designed for iPhone,
+                      Android, and tablets.
+                    </p>
                   </div>
                 </div>
                 <div className="partner-perk-item">
                   <span className="perk-bullet">🎨</span>
                   <div>
                     <strong>High-Definition Art</strong>
-                    <p>Pristine uncompressed color images bringing illustrations to life.</p>
+                    <p>
+                      Pristine uncompressed color images bringing illustrations
+                      to life.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -159,7 +174,9 @@ const About = () => {
                   <span>Start Reading on PanelRift</span>
                   <ExternalLinkIcon size={18} />
                 </a>
-                <span className="partner-cta-note">100% Free • No Mandatory Registration</span>
+                <span className="partner-cta-note">
+                  100% Free • No Mandatory Registration
+                </span>
               </div>
             </div>
           </section>
