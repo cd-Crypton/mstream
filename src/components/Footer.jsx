@@ -10,11 +10,16 @@ const Footer = () => {
         <div className="footer-grid">
           {/* Brand Column */}
           <div className="footer-col footer-col-brand">
-            <Link to="/" className="footer-brand-title" aria-label="MStream Home">
+            <Link
+              to="/"
+              className="footer-brand-title"
+              aria-label="MStream Home"
+            >
               <span className="brand-accent">M</span>STREAM
             </Link>
             <p className="footer-brand-desc">
-              Your free cinematic portal for streaming trending movies, TV shows, and top-tier anime in ultra-crisp high definition.
+              Your free cinematic portal for streaming trending movies, TV
+              shows, and top-tier anime in ultra-crisp high definition.
             </p>
             <div className="footer-status-pill">
               <span className="status-dot"></span>
@@ -91,11 +96,15 @@ const Footer = () => {
                   >
                     PanelRift <ExternalLinkIcon size={13} />
                   </a>
-                  <span className="partner-subtitle">Free Manhwa &amp; Manga Reader</span>
+                  <span className="partner-subtitle">
+                    Free Manhwa &amp; Manga Reader
+                  </span>
                 </div>
               </div>
               <p className="footer-partner-desc">
-                Love anime adaptations? Dive into original source webtoons. Read thousands of free Manhwa chapters with daily updates and pristine HD vertical scans.
+                Love anime adaptations? Dive into original source webtoons. Read
+                thousands of free Manhwa chapters with daily updates and
+                pristine HD vertical scans.
               </p>
               <a
                 href="https://panelrift.eu.cc/"
@@ -114,7 +123,8 @@ const Footer = () => {
         {/* Footer Bottom Strip */}
         <div className="footer-bottom">
           <p className="footer-copy">
-            &copy; {currentYear} MSTREAM. Curated for cinema &amp; entertainment enthusiasts.
+            &copy; {currentYear} MSTREAM. Curated for cinema &amp; entertainment
+            enthusiasts.
           </p>
           <div className="footer-bottom-links">
             <Link to="/about">About</Link>

