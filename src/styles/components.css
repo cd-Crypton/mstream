@@ -1217,7 +1217,7 @@
 }
 
 .server-dropdown-section {
-  min-width: 220px;
+  min-width: 240px;
 }
 
 .server-dropdown {
@@ -1237,6 +1237,12 @@
 .server-dropdown:focus {
   border-color: var(--brand-primary);
   box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+}
+
+.server-dropdown option {
+  background-color: #12121c;
+  color: #f8fafc;
+  padding: 10px;
 }
 
 /* Recommendations Sidebar */
