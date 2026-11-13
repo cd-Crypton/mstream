@@ -13,6 +13,8 @@ import {
   BookmarkCheckIcon,
 } from "../components/Icons";
 
+const SERVER_STORAGE_KEY = "mstream_selected_server";
+
 const Watch = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,18 +23,6 @@ const Watch = () => {
   const type = searchParams.get("type");
   const id = searchParams.get("id");
   const { isInLibrary, toggleLibrary } = useLibrary();
-
-  const [currentServer, setCurrentServer] = useState(0);
-  const [isSandboxEnabled, setIsSandboxEnabled] = useState(true);
-  const [currentSeason, setCurrentSeason] = useState(1);
-  const [currentEpisode, setCurrentEpisode] = useState(1);
-  const [seasons, setSeasons] = useState([]);
-  const [episodes, setEpisodes] = useState([]);
-  const [contentInfo, setContentInfo] = useState(null);
-  const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const { fetchMovieRecommendations, fetchTVRecommendations } = useTMDB();
 
   const servers = [
     {
@@ -58,18 +48,18 @@ const Watch = () => {
       defaultSandbox: true,
       getUrl: (s, e) =>
         `https://zoryva.me/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
-    },
+    },,
     {
       name: "Server 5",
-      defaultSandbox: false,
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://vixsrc.to/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://player.cinezo.live/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 6",
-      defaultSandbox: false,
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://vidcore.io/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://web.nxsha.app/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 7",
@@ -83,11 +73,68 @@ const Watch = () => {
       getUrl: (s, e) =>
         `https://www.vidy.st/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
+    {
+      name: "Server 9",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://vixsrc.to/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
+    {
+      name: "Server 10",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://vidcore.io/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    }
   ];
+
+  const [currentServer, setCurrentServer] = useState(() => {
+    try {
+      const saved = localStorage.getItem(SERVER_STORAGE_KEY);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < servers.length) {
+          return parsed;
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to read server preference from localStorage:", err);
+    }
+    return 0;
+  });
+
+  const [isSandboxEnabled, setIsSandboxEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem(SERVER_STORAGE_KEY);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < servers.length) {
+          return servers[parsed].defaultSandbox;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return servers[0].defaultSandbox;
+  });
+
+  const [currentSeason, setCurrentSeason] = useState(1);
+  const [currentEpisode, setCurrentEpisode] = useState(1);
+  const [seasons, setSeasons] = useState([]);
+  const [episodes, setEpisodes] = useState([]);
+  const [contentInfo, setContentInfo] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const { fetchMovieRecommendations, fetchTVRecommendations } = useTMDB();
 
   const handleServerChange = (index) => {
     setCurrentServer(index);
     setIsSandboxEnabled(servers[index]?.defaultSandbox ?? true);
+    try {
+      localStorage.setItem(SERVER_STORAGE_KEY, index.toString());
+    } catch (err) {
+      console.warn("Failed to save server preference to localStorage:", err);
+    }
   };
 
   useEffect(() => {
@@ -166,7 +213,10 @@ const Watch = () => {
   };
 
   const getVideoUrl = () => {
-    return servers[currentServer].getUrl(currentSeason, currentEpisode);
+    return (
+      servers[currentServer]?.getUrl(currentSeason, currentEpisode) ||
+      servers[0].getUrl(currentSeason, currentEpisode)
+    );
   };
 
   const handleRecommendationClick = (recType, recId) => {
@@ -323,9 +373,13 @@ const Watch = () => {
                     marginBottom: "8px",
                   }}
                 >
-                  <h3 className="section-title" style={{ margin: 0 }}>
+                  <label
+                    htmlFor="serverSelect"
+                    className="section-title"
+                    style={{ margin: 0, cursor: "pointer" }}
+                  >
                     Select Server
-                  </h3>
+                  </label>
                   <button
                     type="button"
                     onClick={() => setIsSandboxEnabled((prev) => !prev)}
@@ -354,70 +408,20 @@ const Watch = () => {
                     </span>
                   </button>
                 </div>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(2, 1fr)",
-                    gap: "8px",
-                  }}
+
+                <select
+                  id="serverSelect"
+                  value={currentServer}
+                  onChange={(e) => handleServerChange(Number(e.target.value))}
+                  className="server-dropdown"
                 >
-                  {servers.map((server, index) => {
-                    const isCurrent = currentServer === index;
-                    return (
-                      <button
-                        key={server.name}
-                        type="button"
-                        onClick={() => handleServerChange(index)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px",
-                          padding: "8px 12px",
-                          borderRadius: "var(--radius-md)",
-                          background: isCurrent
-                            ? "var(--brand-primary)"
-                            : "var(--bg-surface-elevated)",
-                          color: "#ffffff",
-                          border: isCurrent
-                            ? "1px solid var(--brand-hover)"
-                            : "1px solid var(--border-default)",
-                          cursor: "pointer",
-                          fontWeight: 600,
-                          fontSize: "0.84rem",
-                          transition: "all var(--transition-fast)",
-                          boxShadow: isCurrent
-                            ? "0 2px 10px var(--brand-glow)"
-                            : "none",
-                        }}
-                      >
-                        <span
-                          style={{
-                            width: "6px",
-                            height: "6px",
-                            borderRadius: "50%",
-                            backgroundColor: isCurrent
-                              ? "#22c55e"
-                              : "var(--text-muted)",
-                          }}
-                        />
-                        {server.name}
-                        {server.defaultSandbox ? (
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              opacity: 0.7,
-                              marginLeft: "2px",
-                            }}
-                            title="Sandbox Protected"
-                          >
-                            🛡️
-                          </span>
-                        ) : null}
-                      </button>
-                    );
-                  })}
-                </div>
+                  {servers.map((server, index) => (
+                    <option key={server.name} value={index}>
+                      {server.name}{" "}
+                      {server.defaultSandbox ? "🛡️ (Sandbox)" : "⚠️ (No Sandbox)"}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
