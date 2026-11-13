@@ -55,9 +55,9 @@ const Watch = () => {
     },
     {
       name: "Server 4",
-      defaultSandbox: false,
+      defaultSandbox: true,
       getUrl: (s, e) =>
-        `https://vidnest.fun/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+        `https://zoryva.me/embed/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
     {
       name: "Server 5",
@@ -70,6 +70,18 @@ const Watch = () => {
       defaultSandbox: false,
       getUrl: (s, e) =>
         `https://vidcore.io/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
+    {
+      name: "Server 7",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://vidnest.fun/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
+    },
+    {
+      name: "Server 8",
+      defaultSandbox: false,
+      getUrl: (s, e) =>
+        `https://www.vidy.st/${type}/${id}/${type === "tv" ? `/${s}/${e}` : ""}`,
     },
   ];
 
